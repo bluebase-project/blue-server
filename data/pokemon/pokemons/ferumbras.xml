@@ -88,10 +88,10 @@
 		<item name="gold coin" countmax="70" chance="33000" />
 		<item name="gold ingot" countmax="2" chance="75000" />
 		<item name="great shield" chance="26000" />
-		<item name="spellbook of lost souls" chance="26000" />
+		<item name="movebook of lost souls" chance="26000" />
 		<item name="golden armor" chance="24000" />
 		<item name="golden legs" chance="22000" />
-		<item name="spellbook of mind control" chance="22000" />
+		<item name="movebook of mind control" chance="22000" />
 		<item name="velvet mantle" chance="22000" />
 		<item name="demon shield" chance="20000" />
 		<item name="divine plate" chance="20000" />
@@ -101,7 +101,7 @@
 		<item name="glacier kilt" chance="18000" />
 		<item name="lightning legs" chance="18000" />
 		<item name="phoenix shield" chance="18000" />
-		<item name="spellbook of dark mysteries" chance="18000" />
+		<item name="movebook of dark mysteries" chance="18000" />
 		<item name="terra legs" chance="18000" />
 		<item name="emerald sword" chance="16000" />
 		<item name="havoc blade" chance="16000" />
@@ -112,7 +112,7 @@
 		<item name="magic plate armor" chance="14000" />
 		<item name="mastermind shield" chance="14000" />
 		<item name="runed sword" chance="14000" />
-		<item name="spellscroll of prophecies" chance="14000" />
+		<item name="movescroll of prophecies" chance="14000" />
 		<item name="chaos mace" chance="12000" />
 		<item name="demonwing axe" chance="12000" />
 		<item name="greenwood coat" chance="12000" />

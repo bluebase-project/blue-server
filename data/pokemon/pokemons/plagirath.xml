@@ -85,7 +85,7 @@
 		<item id="7633" countmax="5" chance="14000" /><!-- giant shimmering pearl -->
 		<item id="7887" chance="5000" /><!-- terra amulet -->
 		<item id="8473" countmax="15" chance="23000" /><!-- ultimate health potion -->
-		<item id="8901" chance="4000" /><!-- spellbook of warding -->
+		<item id="8901" chance="4000" /><!-- movebook of warding -->
 		<item id="9970" countmax="8" chance="10000" /><!-- small topaz -->
 	</loot>
 </pokemon>

@@ -72,7 +72,7 @@
 		<item name="ring of healing" chance="750" />
 		<item name="blue robe" chance="700" />
 		<item name="wedding ring" chance="560" />
-		<item id="2175" chance="520" /><!-- spellbook -->
+		<item id="2175" chance="520" /><!-- movebook -->
 		<item name="terra mantle" chance="340" />
 		<item id="2124" chance="180" /><!-- crystal ring -->
 		<item name="red robe" chance="150" />

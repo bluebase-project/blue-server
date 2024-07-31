@@ -1,7 +1,7 @@
 local config = {
 	{chanceFrom = 0, chanceTo = 3394}, -- nothing
 	{chanceFrom = 3395, chanceTo = 5159, itemId = 1689}, -- yellow pillow
-	{chanceFrom = 5160, chanceTo = 6954, itemId = 7735}, -- spellwand
+	{chanceFrom = 5160, chanceTo = 6954, itemId = 7735}, -- movewand
 	{chanceFrom = 6955, chanceTo = 8327, itemId = 2114}, -- piggy bank
 	{chanceFrom = 8328, chanceTo = 9141, itemId = 6574}, -- bar of chocolate
 	{chanceFrom = 9142, chanceTo = 9654, itemId = 6394}, -- cream cake

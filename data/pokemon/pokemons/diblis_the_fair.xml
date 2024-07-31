@@ -57,7 +57,7 @@
 		<item id="2229" chance="15000" /><!-- skull -->
 		<item name="vampire shield" chance="2100" />
 		<item name="strong health potion" chance="1500" />
-		<item name="spellbook of lost souls" chance="300" />
+		<item name="movebook of lost souls" chance="300" />
 		<item name="vampire lord token" chance="100000" />
 		<item name="scum bag" chance="500" />
 	</loot>

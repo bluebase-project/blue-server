@@ -117,9 +117,9 @@
 		<item name="crude umbral crossbow" chance="5000" />
 		<item name="umbral crossbow" chance="4000" />
 		<item name="umbral master crossbow" chance="3000" />
-		<item name="crude umbral spellbook" chance="5000" />
-		<item name="umbral spellbook" chance="4000" />
-		<item name="umbral master spellbook" chance="3000" />
+		<item name="crude umbral movebook" chance="5000" />
+		<item name="umbral movebook" chance="4000" />
+		<item name="umbral master movebook" chance="3000" />
 		<item name="unrealized dream" countmax="3" chance="10000" />
 		<item name="nightmare horn" chance="6000" />
 		<item name="dream warden mask" chance="6000" />

@@ -58,7 +58,7 @@
 		<item name="energy spike sword" chance="500" />
 		<item name="lightning pendant" chance="730" />
 		<item name="lightning legs" chance="150" />
-		<item name="spellbook of warding" chance="360" />
+		<item name="movebook of warding" chance="360" />
 		<item name="wand of starstorm" chance="730" />
 		<item id="9809" chance="730" /><!-- rusty armor (semi-rare) -->
 		<item name="shockwave amulet" chance="500" />

@@ -58,7 +58,7 @@
 		<item name="green mushroom" chance="1450" />
 		<item name="health potion" chance="4930" />
 		<item name="mana potion" chance="4950" />
-		<item name="spellbook of enlightenment" chance="520" />
+		<item name="movebook of enlightenment" chance="520" />
 		<item name="gear wheel" chance="940" />
 		<item name="slime mould" chance="340" />
 		<item name="golden can of oil" chance="40" />

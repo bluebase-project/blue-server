@@ -112,10 +112,10 @@
 		<item name="ultimate health potion" chance="25000" />
 		<item name="oceanborn leviathan armor" chance="16666" />
 		<item name="frozen plate" chance="8333" />
-		<item name="spellbook of warding" chance="20000" />
-		<item name="spellbook of mind control" chance="11111" />
-		<item name="spellbook of lost souls" chance="16666" />
-		<item name="spellscroll of prophecies" chance="25000" />
-		<item name="spellbook of dark mysteries" chance="20000" />
+		<item name="movebook of warding" chance="20000" />
+		<item name="movebook of mind control" chance="11111" />
+		<item name="movebook of lost souls" chance="16666" />
+		<item name="movescroll of prophecies" chance="25000" />
+		<item name="movebook of dark mysteries" chance="20000" />
 	</loot>
 </pokemon>

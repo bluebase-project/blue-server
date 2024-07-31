@@ -58,7 +58,7 @@
 		<item name="clerical mace" chance="1120" />
 		<item name="dwarven ring" chance="580" />
 		<item name="small sapphire" chance="580" />
-		<item id="2175" chance="500" /><!-- spellbook -->
+		<item id="2175" chance="500" /><!-- movebook -->
 		<item name="terra boots" chance="500" />
 		<item name="iron ore" chance="290" />
 	</loot>

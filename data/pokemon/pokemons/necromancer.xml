@@ -66,7 +66,7 @@
 		<item name="clerical mace" chance="390" />
 		<item name="strong mana potion" chance="300" />
 		<item name="boots of haste" chance="210" />
-		<item name="spellbook of warding" chance="130" />
+		<item name="movebook of warding" chance="130" />
 		<item name="skull staff" chance="100" />
 		<item name="noble axe" chance="10" />
 	</loot>

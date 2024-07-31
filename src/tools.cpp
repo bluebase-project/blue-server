@@ -1150,14 +1150,14 @@ const char* getReturnMessage(ReturnValue value)
 		case RETURNVALUE_YOUNEEDPREMIUMACCOUNT:
 			return "You need a premium account.";
 
-		case RETURNVALUE_YOUNEEDTOLEARNTHISSPELL:
-			return "You must learn this spell first.";
+		case RETURNVALUE_YOUNEEDTOLEARNTHISMOVE:
+			return "You must learn this move first.";
 
-		case RETURNVALUE_YOURVOCATIONCANNOTUSETHISSPELL:
-			return "You have the wrong vocation to cast this spell.";
+		case RETURNVALUE_YOURVOCATIONCANNOTUSETHISMOVE:
+			return "You have the wrong vocation to cast this move.";
 
-		case RETURNVALUE_YOUNEEDAWEAPONTOUSETHISSPELL:
-			return "You need to equip a weapon to use this spell.";
+		case RETURNVALUE_YOUNEEDAWEAPONTOUSETHISMOVE:
+			return "You need to equip a weapon to use this move.";
 
 		case RETURNVALUE_PLAYERISPZLOCKEDLEAVEPVPZONE:
 			return "You can not leave a pvp zone after attacking another player.";
@@ -1171,8 +1171,8 @@ const char* getReturnMessage(ReturnValue value)
 		case RETURNVALUE_YOUCANNOTLOGOUTHERE:
 			return "You can not logout here.";
 
-		case RETURNVALUE_YOUNEEDAMAGICITEMTOCASTSPELL:
-			return "You need a magic item to cast this spell.";
+		case RETURNVALUE_YOUNEEDAMAGICITEMTOCASTMOVE:
+			return "You need a magic item to cast this move.";
 
 		case RETURNVALUE_CANNOTCONJUREITEMHERE:
 			return "You cannot conjure items here.";
@@ -1235,18 +1235,18 @@ int64_t OTSYS_TIME()
 	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
-SpellGroup_t stringToSpellGroup(const std::string& value)
+MoveGroup_t stringToMoveGroup(const std::string& value)
 {
 	std::string tmpStr = asLowerCaseString(value);
 	if (tmpStr == "attack" || tmpStr == "1") {
-		return SPELLGROUP_ATTACK;
+		return MOVEGROUP_ATTACK;
 	} else if (tmpStr == "healing" || tmpStr == "2") {
-		return SPELLGROUP_HEALING;
+		return MOVEGROUP_HEALING;
 	} else if (tmpStr == "support" || tmpStr == "3") {
-		return SPELLGROUP_SUPPORT;
+		return MOVEGROUP_SUPPORT;
 	} else if (tmpStr == "special" || tmpStr == "4") {
-		return SPELLGROUP_SPECIAL;
+		return MOVEGROUP_SPECIAL;
 	}
 
-	return SPELLGROUP_NONE;
+	return MOVEGROUP_NONE;
 }

@@ -85,7 +85,7 @@
 		<item name="crown armor" chance="510" />
 		<item name="charmer's tiara" chance="190" />
 		<item name="royal helmet" chance="130" />
-		<item name="spellbook of mind control" chance="100" />
+		<item name="movebook of mind control" chance="100" />
 		<item name="swamplair armor" chance="90" />
 	</loot>
 </pokemon>

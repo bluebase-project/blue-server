@@ -22,7 +22,7 @@ const std::unordered_map<std::string, PlayerFlags> ParsePlayerFlagMap = {
 	{"hasinfinitemana", PlayerFlag_HasInfiniteMana},
 	{"hasinfinitesoul", PlayerFlag_HasInfiniteSoul},
 	{"hasnoexhaustion", PlayerFlag_HasNoExhaustion},
-	{"cannotusespells", PlayerFlag_CannotUseSpells},
+	{"cannotusemoves", PlayerFlag_CannotUseMoves},
 	{"cannotpickupitem", PlayerFlag_CannotPickupItem},
 	{"canalwayslogin", PlayerFlag_CanAlwaysLogin},
 	{"canbroadcast", PlayerFlag_CanBroadcast},
@@ -42,7 +42,7 @@ const std::unordered_map<std::string, PlayerFlags> ParsePlayerFlagMap = {
 	{"specialvip", PlayerFlag_SpecialVIP},
 	{"notgenerateloot", PlayerFlag_NotGenerateLoot},
 	{"ignoreprotectionzone", PlayerFlag_IgnoreProtectionZone},
-	{"ignorespellcheck", PlayerFlag_IgnoreSpellCheck},
+	{"ignoremovecheck", PlayerFlag_IgnoreMoveCheck},
 	{"ignoreweaponcheck", PlayerFlag_IgnoreWeaponCheck},
 	{"cannotbemuted", PlayerFlag_CannotBeMuted},
 	{"isalwayspremium", PlayerFlag_IsAlwaysPremium}

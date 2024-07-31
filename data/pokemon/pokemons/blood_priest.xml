@@ -65,8 +65,8 @@
 		<item name="white piece of cloth" chance="3040" />
 		<item name="red piece of cloth" chance="640" />
 		<item name="strong mana potion" chance="6000" />
-		<item name="spellbook of warding" chance="290" />
-		<item name="spellbook of mind control" chance="180" />
+		<item name="movebook of warding" chance="290" />
+		<item name="movebook of mind control" chance="180" />
 		<item name="underworld rod" chance="470" />
 		<item name="book of necromantic rituals" chance="13550" />
 		<item name="rough red gem" chance="880" />

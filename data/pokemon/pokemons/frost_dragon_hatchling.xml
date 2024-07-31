@@ -53,7 +53,7 @@
 		<item name="gold coin" countmax="55" chance="86750" />
 		<item name="dragon ham" chance="79600" />
 		<item name="health potion" chance="560" />
-		<item name="spellbook of enlightenment" chance="400" />
+		<item name="movebook of enlightenment" chance="400" />
 		<item name="frosty heart" chance="5000" />
 	</loot>
 </pokemon>

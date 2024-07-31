@@ -75,9 +75,9 @@
 		<item id="2148" countmax="100" chance="50000" /><!-- gold coin -->
 		<item id="2152" countmax="50" chance="100000" /><!-- platinum coin -->
 		<item id="22598" chance="100000" /><!-- unrealized dream -->
-		<item id="8903" chance="5130" /><!-- spellbook of lost souls -->
-		<item id="8901" chance="35900" /><!-- spellbook of warding -->
-		<item id="8902" chance="10260" /><!-- spellbook of mind control -->
+		<item id="8903" chance="5130" /><!-- movebook of lost souls -->
+		<item id="8901" chance="35900" /><!-- movebook of warding -->
+		<item id="8902" chance="10260" /><!-- movebook of mind control -->
 		<item id="3962" chance="33330" /><!-- beastslayer axe -->
 		<item id="7456" chance="12820" /><!-- noble axe -->
 		<item id="7453" chance="2560" /><!-- executioner -->

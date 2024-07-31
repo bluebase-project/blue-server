@@ -5,7 +5,7 @@
 
 #include "pokemons.h"
 #include "pokemon.h"
-#include "spells.h"
+#include "moves.h"
 #include "combat.h"
 #include "weapons.h"
 #include "configmanager.h"
@@ -14,14 +14,14 @@
 #include "pugicast.h"
 
 extern Game g_game;
-extern Spells* g_spells;
+extern Moves* g_moves;
 extern Pokemons g_pokemons;
 extern ConfigManager g_config;
 
-spellBlock_t::~spellBlock_t()
+moveBlock_t::~moveBlock_t()
 {
-	if (combatSpell) {
-		delete spell;
+	if (combatMove) {
+		delete move;
 	}
 }
 
@@ -90,7 +90,7 @@ ConditionDamage* Pokemons::getDamageCondition(ConditionType_t conditionType,
 	return condition;
 }
 
-bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, const std::string& description)
+bool Pokemons::deserializeMove(const pugi::xml_node& node, moveBlock_t& sb, const std::string& description)
 {
 	std::string name;
 	std::string scriptName;
@@ -115,11 +115,11 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 		uint32_t chance = pugi::cast<uint32_t>(attr.value());
 		if (chance > 100) {
 			chance = 100;
-			std::cout << "[Warning - Pokemons::deserializeSpell] " << description << " - Chance value out of bounds for spell: " << name << std::endl;
+			std::cout << "[Warning - Pokemons::deserializeMove] " << description << " - Chance value out of bounds for move: " << name << std::endl;
 		}
 		sb.chance = chance;
 	} else if (asLowerCaseString(name) != "melee") {
-		std::cout << "[Warning - Pokemons::deserializeSpell] " << description << " - Missing chance value on non-melee spell: " << name << std::endl;
+		std::cout << "[Warning - Pokemons::deserializeMove] " << description << " - Missing chance value on non-melee move: " << name << std::endl;
 	}
 
 	if ((attr = node.attribute("range"))) {
@@ -145,12 +145,12 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 		}
 	}
 
-	if (auto spell = g_spells->getSpellByName(name)) {
-		sb.spell = spell;
+	if (auto move = g_moves->getMoveByName(name)) {
+		sb.move = move;
 		return true;
 	}
 
-	CombatSpell* combatSpell = nullptr;
+	CombatMove* combatMove = nullptr;
 	bool needTarget = false;
 	bool needDirection = false;
 
@@ -163,17 +163,17 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 			needTarget = attr.as_bool();
 		}
 
-		std::unique_ptr<CombatSpell> combatSpellPtr(new CombatSpell(nullptr, needTarget, needDirection));
-		if (!combatSpellPtr->loadScript("data/" + g_spells->getScriptBaseName() + "/scripts/" + scriptName)) {
+		std::unique_ptr<CombatMove> combatMovePtr(new CombatMove(nullptr, needTarget, needDirection));
+		if (!combatMovePtr->loadScript("data/" + g_moves->getScriptBaseName() + "/scripts/" + scriptName)) {
 			return false;
 		}
 
-		if (!combatSpellPtr->loadScriptCombat()) {
+		if (!combatMovePtr->loadScriptCombat()) {
 			return false;
 		}
 
-		combatSpell = combatSpellPtr.release();
-		combatSpell->getCombat()->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
+		combatMove = combatMovePtr.release();
+		combatMove->getCombat()->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
 	} else {
 		Combat_ptr combat = std::make_shared<Combat>();
 		if ((attr = node.attribute("length"))) {
@@ -181,7 +181,7 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 			if (length > 0) {
 				int32_t spread = 3;
 
-				//need direction spell
+				//need direction move
 				if ((attr = node.attribute("spread"))) {
 					spread = std::max<int32_t>(0, pugi::cast<int32_t>(attr.value()));
 				}
@@ -197,7 +197,7 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 		if ((attr = node.attribute("radius"))) {
 			int32_t radius = pugi::cast<int32_t>(attr.value());
 
-			//target spell
+			//target move
 			if ((attr = node.attribute("target"))) {
 				needTarget = attr.as_bool();
 			}
@@ -333,7 +333,7 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 				}
 
 				if (minSpeedChange == 0) {
-					std::cout << "[Error - Pokemons::deserializeSpell] - " << description << " - missing speedchange/minspeedchange value" << std::endl;
+					std::cout << "[Error - Pokemons::deserializeMove] - " << description << " - missing speedchange/minspeedchange value" << std::endl;
 					return false;
 				}
 
@@ -343,7 +343,7 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 			}
 
 			if (minSpeedChange < -1000) {
-				std::cout << "[Warning - Pokemons::deserializeSpell] - " << description << " - you cannot reduce a creatures speed below -1000 (100%)" << std::endl;
+				std::cout << "[Warning - Pokemons::deserializeMove] - " << description << " - you cannot reduce a creatures speed below -1000 (100%)" << std::endl;
 				minSpeedChange = -1000;
 			}
 
@@ -473,12 +473,12 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 		} else if (tmpName == "effect") {
 			//
 		} else {
-			std::cout << "[Error - Pokemons::deserializeSpell] - " << description << " - Unknown spell name: " << name << std::endl;
+			std::cout << "[Error - Pokemons::deserializeMove] - " << description << " - Unknown move name: " << name << std::endl;
 			return false;
 		}
 
 		combat->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
-		combatSpell = new CombatSpell(combat, needTarget, needDirection);
+		combatMove = new CombatMove(combat, needTarget, needDirection);
 
 		for (auto attributeNode : node.children()) {
 			if ((attr = attributeNode.attribute("key"))) {
@@ -489,7 +489,7 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 						if (shoot != CONST_ANI_NONE) {
 							combat->setParam(COMBAT_PARAM_DISTANCEEFFECT, shoot);
 						} else {
-							std::cout << "[Warning - Pokemons::deserializeSpell] " << description << " - Unknown shootEffect: " << attr.as_string() << std::endl;
+							std::cout << "[Warning - Pokemons::deserializeMove] " << description << " - Unknown shootEffect: " << attr.as_string() << std::endl;
 						}
 					}
 				} else if (strcasecmp(value, "areaeffect") == 0) {
@@ -498,116 +498,116 @@ bool Pokemons::deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, co
 						if (effect != CONST_ME_NONE) {
 							combat->setParam(COMBAT_PARAM_EFFECT, effect);
 						} else {
-							std::cout << "[Warning - Pokemons::deserializeSpell] " << description << " - Unknown areaEffect: " << attr.as_string() << std::endl;
+							std::cout << "[Warning - Pokemons::deserializeMove] " << description << " - Unknown areaEffect: " << attr.as_string() << std::endl;
 						}
 					}
 				} else {
-					std::cout << "[Warning - Pokemons::deserializeSpells] Effect type \"" << attr.as_string() << "\" does not exist." << std::endl;
+					std::cout << "[Warning - Pokemons::deserializeMoves] Effect type \"" << attr.as_string() << "\" does not exist." << std::endl;
 				}
 			}
 		}
 	}
 
-	sb.spell = combatSpell;
-	if (combatSpell) {
-		sb.combatSpell = true;
+	sb.move = combatMove;
+	if (combatMove) {
+		sb.combatMove = true;
 	}
 	return true;
 }
 
-bool Pokemons::deserializeSpell(PokemonSpell* spell, spellBlock_t& sb, const std::string& description)
+bool Pokemons::deserializeMove(PokemonMove* move, moveBlock_t& sb, const std::string& description)
 {
-	if (!spell->scriptName.empty()) {
-		spell->isScripted = true;
-	} else if (!spell->name.empty()) {
-		spell->isScripted = false;
+	if (!move->scriptName.empty()) {
+		move->isScripted = true;
+	} else if (!move->name.empty()) {
+		move->isScripted = false;
 	} else {
 		return false;
 	}
 
-	sb.speed = spell->interval;
+	sb.speed = move->interval;
 
-	if (spell->chance > 100) {
+	if (move->chance > 100) {
 		sb.chance = 100;
 	} else {
-		sb.chance = spell->chance;
+		sb.chance = move->chance;
 	}
 
-	if (spell->range > (Map::maxViewportX * 2)) {
-		spell->range = Map::maxViewportX * 2;
+	if (move->range > (Map::maxViewportX * 2)) {
+		move->range = Map::maxViewportX * 2;
 	}
-	sb.range = spell->range;
+	sb.range = move->range;
 
-	sb.minCombatValue = spell->minCombatValue;
-	sb.maxCombatValue = spell->maxCombatValue;
+	sb.minCombatValue = move->minCombatValue;
+	sb.maxCombatValue = move->maxCombatValue;
 	if (std::abs(sb.minCombatValue) > std::abs(sb.maxCombatValue)) {
 		int32_t value = sb.maxCombatValue;
 		sb.maxCombatValue = sb.minCombatValue;
 		sb.minCombatValue = value;
 	}
 
-	sb.spell = g_spells->getSpellByName(spell->name);
-	if (sb.spell) {
+	sb.move = g_moves->getMoveByName(move->name);
+	if (sb.move) {
 		return true;
 	}
 
-	CombatSpell* combatSpell = nullptr;
+	CombatMove* combatMove = nullptr;
 
-	if (spell->isScripted) {
-		std::unique_ptr<CombatSpell> combatSpellPtr(new CombatSpell(nullptr, spell->needTarget, spell->needDirection));
-		if (!combatSpellPtr->loadScript("data/" + g_spells->getScriptBaseName() + "/scripts/" + spell->scriptName)) {
+	if (move->isScripted) {
+		std::unique_ptr<CombatMove> combatMovePtr(new CombatMove(nullptr, move->needTarget, move->needDirection));
+		if (!combatMovePtr->loadScript("data/" + g_moves->getScriptBaseName() + "/scripts/" + move->scriptName)) {
 			std::cout << "cannot find file" << std::endl;
 			return false;
 		}
 
-		if (!combatSpellPtr->loadScriptCombat()) {
+		if (!combatMovePtr->loadScriptCombat()) {
 			return false;
 		}
 
-		combatSpell = combatSpellPtr.release();
-		combatSpell->getCombat()->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
+		combatMove = combatMovePtr.release();
+		combatMove->getCombat()->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
 	} else {
 		Combat_ptr combat = std::make_shared<Combat>();
-		sb.combatSpell = true;
+		sb.combatMove = true;
 
-		if (spell->length > 0) {
-			spell->spread = std::max<int32_t>(0, spell->spread);
+		if (move->length > 0) {
+			move->spread = std::max<int32_t>(0, move->spread);
 
 			AreaCombat* area = new AreaCombat();
-			area->setupArea(spell->length, spell->spread);
+			area->setupArea(move->length, move->spread);
 			combat->setArea(area);
 
-			spell->needDirection = true;
+			move->needDirection = true;
 		}
 
-		if (spell->radius > 0) {
+		if (move->radius > 0) {
 			AreaCombat* area = new AreaCombat();
-			area->setupArea(spell->radius);
+			area->setupArea(move->radius);
 			combat->setArea(area);
 		}
 
-		std::string tmpName = asLowerCaseString(spell->name);
+		std::string tmpName = asLowerCaseString(move->name);
 
 		if (tmpName == "melee") {
 			sb.isMelee = true;
 
-			if (spell->attack > 0 && spell->skill > 0) {
+			if (move->attack > 0 && move->skill > 0) {
 				sb.minCombatValue = 0;
-				sb.maxCombatValue = -Weapons::getMaxMeleeDamage(spell->skill, spell->attack);
+				sb.maxCombatValue = -Weapons::getMaxMeleeDamage(move->skill, move->attack);
 			}
 
-			if (spell->conditionType != CONDITION_NONE) {
-				ConditionType_t conditionType = spell->conditionType;
+			if (move->conditionType != CONDITION_NONE) {
+				ConditionType_t conditionType = move->conditionType;
 
-				int32_t minDamage = spell->conditionMinDamage;
+				int32_t minDamage = move->conditionMinDamage;
 				int32_t maxDamage = minDamage;
 
 				uint32_t tickInterval = 2000;
-				if (spell->tickInterval != 0) {
-					tickInterval = spell->tickInterval;
+				if (move->tickInterval != 0) {
+					tickInterval = move->tickInterval;
 				}
 
-				Condition* condition = getDamageCondition(conditionType, maxDamage, minDamage, spell->conditionStartDamage, tickInterval);
+				Condition* condition = getDamageCondition(conditionType, maxDamage, minDamage, move->conditionStartDamage, tickInterval);
 				combat->addCondition(condition);
 			}
 
@@ -617,42 +617,42 @@ bool Pokemons::deserializeSpell(PokemonSpell* spell, spellBlock_t& sb, const std
 			combat->setParam(COMBAT_PARAM_BLOCKSHIELD, 1);
 			combat->setOrigin(ORIGIN_MELEE);
 		} else if (tmpName == "combat") {
-			if (spell->combatType == COMBAT_UNDEFINEDDAMAGE) {
-				std::cout << "[Warning - Pokemons::deserializeSpell] - " << description << " - spell has undefined damage" << std::endl;
+			if (move->combatType == COMBAT_UNDEFINEDDAMAGE) {
+				std::cout << "[Warning - Pokemons::deserializeMove] - " << description << " - move has undefined damage" << std::endl;
 				combat->setParam(COMBAT_PARAM_TYPE, COMBAT_PHYSICALDAMAGE);
 			}
 
-			if (spell->combatType == COMBAT_PHYSICALDAMAGE) {
+			if (move->combatType == COMBAT_PHYSICALDAMAGE) {
 				combat->setParam(COMBAT_PARAM_BLOCKARMOR, 1);
 				combat->setOrigin(ORIGIN_RANGED);
-			} else if (spell->combatType == COMBAT_HEALING) {
+			} else if (move->combatType == COMBAT_HEALING) {
 				combat->setParam(COMBAT_PARAM_AGGRESSIVE, 0);
 			}
-			combat->setParam(COMBAT_PARAM_TYPE, spell->combatType);
+			combat->setParam(COMBAT_PARAM_TYPE, move->combatType);
 		} else if (tmpName == "speed") {
 			int32_t minSpeedChange = 0;
 			int32_t maxSpeedChange = 0;
 			int32_t duration = 10000;
 
-			if (spell->duration != 0) {
-				duration = spell->duration;
+			if (move->duration != 0) {
+				duration = move->duration;
 			}
 
-			if (spell->minSpeedChange != 0) {
-				minSpeedChange = spell->minSpeedChange;
+			if (move->minSpeedChange != 0) {
+				minSpeedChange = move->minSpeedChange;
 			} else {
-				std::cout << "[Error - Pokemons::deserializeSpell] - " << description << " - missing speedchange/minspeedchange value" << std::endl;
-				delete spell;
+				std::cout << "[Error - Pokemons::deserializeMove] - " << description << " - missing speedchange/minspeedchange value" << std::endl;
+				delete move;
 				return false;
 			}
 
 			if (minSpeedChange < -1000) {
-				std::cout << "[Warning - Pokemons::deserializeSpell] - " << description << " - you cannot reduce a creatures speed below -1000 (100%)" << std::endl;
+				std::cout << "[Warning - Pokemons::deserializeMove] - " << description << " - you cannot reduce a creatures speed below -1000 (100%)" << std::endl;
 				minSpeedChange = -1000;
 			}
 
-			if (spell->maxSpeedChange != 0) {
-				maxSpeedChange = spell->maxSpeedChange;
+			if (move->maxSpeedChange != 0) {
+				maxSpeedChange = move->maxSpeedChange;
 			} else {
 				maxSpeedChange = minSpeedChange; // static speedchange value
 			}
@@ -671,19 +671,19 @@ bool Pokemons::deserializeSpell(PokemonSpell* spell, spellBlock_t& sb, const std
 		} else if (tmpName == "outfit") {
 			int32_t duration = 10000;
 
-			if (spell->duration != 0) {
-				duration = spell->duration;
+			if (move->duration != 0) {
+				duration = move->duration;
 			}
 
 			ConditionOutfit* condition = static_cast<ConditionOutfit*>(Condition::createCondition(CONDITIONID_COMBAT, CONDITION_OUTFIT, duration, 0));
-			condition->setOutfit(spell->outfit);
+			condition->setOutfit(move->outfit);
 			combat->setParam(COMBAT_PARAM_AGGRESSIVE, 0);
 			combat->addCondition(condition);
 		} else if (tmpName == "invisible") {
 			int32_t duration = 10000;
 
-			if (spell->duration != 0) {
-				duration = spell->duration;
+			if (move->duration != 0) {
+				duration = move->duration;
 			}
 
 			Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_INVISIBLE, duration, 0);
@@ -693,12 +693,12 @@ bool Pokemons::deserializeSpell(PokemonSpell* spell, spellBlock_t& sb, const std
 			int32_t duration = 10000;
 			uint8_t drunkenness = 25;
 
-			if (spell->duration != 0) {
-				duration = spell->duration;
+			if (move->duration != 0) {
+				duration = move->duration;
 			}
 
-			if (spell->drunkenness != 0) {
-				drunkenness = spell->drunkenness;
+			if (move->drunkenness != 0) {
+				drunkenness = move->drunkenness;
 			}
 
 			Condition* condition = Condition::createCondition(CONDITIONID_COMBAT, CONDITION_DRUNK, duration, drunkenness);
@@ -712,55 +712,55 @@ bool Pokemons::deserializeSpell(PokemonSpell* spell, spellBlock_t& sb, const std
 		} else if (tmpName == "condition") {
 			uint32_t tickInterval = 2000;
 
-			if (spell->conditionType == CONDITION_NONE) {
-				std::cout << "[Error - Pokemons::deserializeSpell] - " << description << " - Condition is not set for: " << spell->name << std::endl;
+			if (move->conditionType == CONDITION_NONE) {
+				std::cout << "[Error - Pokemons::deserializeMove] - " << description << " - Condition is not set for: " << move->name << std::endl;
 			}
 
-			if (spell->tickInterval != 0) {
-				int32_t value = spell->tickInterval;
+			if (move->tickInterval != 0) {
+				int32_t value = move->tickInterval;
 				if (value > 0) {
 					tickInterval = value;
 				}
 			}
 
-			int32_t minDamage = std::abs(spell->conditionMinDamage);
-			int32_t maxDamage = std::abs(spell->conditionMaxDamage);
+			int32_t minDamage = std::abs(move->conditionMinDamage);
+			int32_t maxDamage = std::abs(move->conditionMaxDamage);
 			int32_t startDamage = 0;
 
-			if (spell->conditionStartDamage != 0) {
-				int32_t value = std::abs(spell->conditionStartDamage);
+			if (move->conditionStartDamage != 0) {
+				int32_t value = std::abs(move->conditionStartDamage);
 				if (value <= minDamage) {
 					startDamage = value;
 				}
 			}
 
-			Condition* condition = getDamageCondition(spell->conditionType, maxDamage, minDamage, startDamage, tickInterval);
+			Condition* condition = getDamageCondition(move->conditionType, maxDamage, minDamage, startDamage, tickInterval);
 			combat->addCondition(condition);
 		} else if (tmpName == "strength") {
 			//
 		} else if (tmpName == "effect") {
 			//
 		} else {
-			std::cout << "[Error - Pokemons::deserializeSpell] - " << description << " - Unknown spell name: " << spell->name << std::endl;
+			std::cout << "[Error - Pokemons::deserializeMove] - " << description << " - Unknown move name: " << move->name << std::endl;
 		}
 
-		if (spell->needTarget) {
-			if (spell->shoot != CONST_ANI_NONE) {
-				combat->setParam(COMBAT_PARAM_DISTANCEEFFECT, spell->shoot);
+		if (move->needTarget) {
+			if (move->shoot != CONST_ANI_NONE) {
+				combat->setParam(COMBAT_PARAM_DISTANCEEFFECT, move->shoot);
 			}
 		}
 
-		if (spell->effect != CONST_ME_NONE) {
-			combat->setParam(COMBAT_PARAM_EFFECT, spell->effect);
+		if (move->effect != CONST_ME_NONE) {
+			combat->setParam(COMBAT_PARAM_EFFECT, move->effect);
 		}
 
 		combat->setPlayerCombatValues(COMBAT_FORMULA_DAMAGE, sb.minCombatValue, 0, sb.maxCombatValue, 0);
-		combatSpell = new CombatSpell(combat, spell->needTarget, spell->needDirection);
+		combatMove = new CombatMove(combat, move->needTarget, move->needDirection);
 	}
 
-	sb.spell = combatSpell;
-	if (combatSpell) {
-		sb.combatSpell = true;
+	sb.move = combatMove;
+	if (combatMove) {
+		sb.combatMove = true;
 	}
 	return true;
 }
@@ -1011,11 +1011,11 @@ PokemonType* Pokemons::loadPokemon(const std::string& file, const std::string& p
 
 	if ((node = pokemonNode.child("attacks"))) {
 		for (auto attackNode : node.children()) {
-			spellBlock_t sb;
-			if (deserializeSpell(attackNode, sb, pokemonName)) {
-				mType->info.attackSpells.emplace_back(std::move(sb));
+			moveBlock_t sb;
+			if (deserializeMove(attackNode, sb, pokemonName)) {
+				mType->info.attackMoves.emplace_back(std::move(sb));
 			} else {
-				std::cout << "[Warning - Pokemons::loadPokemon] Cant load spell. " << file << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Cant load move. " << file << std::endl;
 			}
 		}
 	}
@@ -1030,11 +1030,11 @@ PokemonType* Pokemons::loadPokemon(const std::string& file, const std::string& p
 		}
 
 		for (auto defenseNode : node.children()) {
-			spellBlock_t sb;
-			if (deserializeSpell(defenseNode, sb, pokemonName)) {
-				mType->info.defenseSpells.emplace_back(std::move(sb));
+			moveBlock_t sb;
+			if (deserializeMove(defenseNode, sb, pokemonName)) {
+				mType->info.defenseMoves.emplace_back(std::move(sb));
 			} else {
-				std::cout << "[Warning - Pokemons::loadPokemon] Cant load spell. " << file << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Cant load move. " << file << std::endl;
 			}
 		}
 	}
@@ -1322,8 +1322,8 @@ PokemonType* Pokemons::loadPokemon(const std::string& file, const std::string& p
 
 	mType->info.summons.shrink_to_fit();
 	mType->info.lootItems.shrink_to_fit();
-	mType->info.attackSpells.shrink_to_fit();
-	mType->info.defenseSpells.shrink_to_fit();
+	mType->info.attackMoves.shrink_to_fit();
+	mType->info.defenseMoves.shrink_to_fit();
 	mType->info.voiceVector.shrink_to_fit();
 	mType->info.scripts.shrink_to_fit();
 	return mType;

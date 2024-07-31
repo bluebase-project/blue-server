@@ -61,6 +61,6 @@
 		<item name="cape" chance="15000" />
 		<item name="cookie" countmax="8" chance="30000" />
 		<item name="star herb" chance="20000" />
-		<item name="spellbook of mind control" chance="2000" />
+		<item name="movebook of mind control" chance="2000" />
 	</loot>
 </pokemon>

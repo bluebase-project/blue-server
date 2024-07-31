@@ -80,7 +80,7 @@ class TalkActions final : public BaseEvents
 		TalkActions(const TalkActions&) = delete;
 		TalkActions& operator=(const TalkActions&) = delete;
 
-		TalkActionResult_t playerSaySpell(Player* player, SpeakClasses type, const std::string& words) const;
+		TalkActionResult_t playerSayMove(Player* player, SpeakClasses type, const std::string& words) const;
 
 		bool registerLuaEvent(TalkAction* event);
 		void clear(bool fromLua) override final;

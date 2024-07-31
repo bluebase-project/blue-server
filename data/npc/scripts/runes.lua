@@ -17,7 +17,7 @@ keywordHandler:addKeyword({'stuff'}, StdModule.say, {npcHandler = npcHandler, te
 keywordHandler:addAliasKeyword({'wares'})
 keywordHandler:addAliasKeyword({'offer'})
 
-shopModule:addBuyableItem({'spellbook'}, 2175, 150, 'spellbook')
+shopModule:addBuyableItem({'movebook'}, 2175, 150, 'movebook')
 shopModule:addBuyableItem({'magic lightwand'}, 2162, 400, 'magic lightwand')
 
 shopModule:addBuyableItem({'small health'}, 8704, 20, 1, 'small health potion')

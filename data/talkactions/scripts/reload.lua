@@ -42,8 +42,8 @@ local reloadTypes = {
 	["raid"] = RELOAD_TYPE_RAIDS,
 	["raids"] = RELOAD_TYPE_RAIDS,
 
-	["spell"] = RELOAD_TYPE_SPELLS,
-	["spells"] =  RELOAD_TYPE_SPELLS,
+	["move"] = RELOAD_TYPE_MOVES,
+	["moves"] =  RELOAD_TYPE_MOVES,
 
 	["talk"] = RELOAD_TYPE_TALKACTIONS,
 	["talkaction"] = RELOAD_TYPE_TALKACTIONS,

@@ -16,7 +16,7 @@ bool Condition::setParam(ConditionParam_t param, int32_t value)
 			return true;
 		}
 
-		case CONDITION_PARAM_BUFF_SPELL: {
+		case CONDITION_PARAM_BUFF_MOVE: {
 			isBuff = (value != 0);
 			return true;
 		}
@@ -43,7 +43,7 @@ int32_t Condition::getParam(ConditionParam_t param)
 		case CONDITION_PARAM_TICKS:
 			return ticks;
 
-		case CONDITION_PARAM_BUFF_SPELL:
+		case CONDITION_PARAM_BUFF_MOVE:
 			return isBuff ? 1: 0;
 
 		case CONDITION_PARAM_SUBID:
@@ -197,11 +197,11 @@ Condition* Condition::createCondition(ConditionId_t id, ConditionType_t type, in
 		case CONDITION_ATTRIBUTES:
 			return new ConditionAttributes(id, type, ticks, buff, subId, aggressive);
 
-		case CONDITION_SPELLCOOLDOWN:
-			return new ConditionSpellCooldown(id, type, ticks, buff, subId, aggressive);
+		case CONDITION_MOVECOOLDOWN:
+			return new ConditionMoveCooldown(id, type, ticks, buff, subId, aggressive);
 
-		case CONDITION_SPELLGROUPCOOLDOWN:
-			return new ConditionSpellGroupCooldown(id, type, ticks, buff, subId, aggressive);
+		case CONDITION_MOVEGROUPCOOLDOWN:
+			return new ConditionMoveGroupCooldown(id, type, ticks, buff, subId, aggressive);
 
 		case CONDITION_DRUNK:
 			return new ConditionDrunk(id, type, ticks, buff, subId, param, aggressive);
@@ -1861,7 +1861,7 @@ void ConditionLight::serialize(PropWriteStream& propWriteStream)
 	propWriteStream.write<uint32_t>(lightChangeInterval);
 }
 
-void ConditionSpellCooldown::addCondition(Creature* creature, const Condition* condition)
+void ConditionMoveCooldown::addCondition(Creature* creature, const Condition* condition)
 {
 	if (updateCondition(condition)) {
 		setTicks(condition->getTicks());
@@ -1869,13 +1869,13 @@ void ConditionSpellCooldown::addCondition(Creature* creature, const Condition* c
 		if (subId != 0 && ticks > 0) {
 			Player* player = creature->getPlayer();
 			if (player) {
-				player->sendSpellCooldown(subId, ticks);
+				player->sendMoveCooldown(subId, ticks);
 			}
 		}
 	}
 }
 
-bool ConditionSpellCooldown::startCondition(Creature* creature)
+bool ConditionMoveCooldown::startCondition(Creature* creature)
 {
 	if (!Condition::startCondition(creature)) {
 		return false;
@@ -1884,13 +1884,13 @@ bool ConditionSpellCooldown::startCondition(Creature* creature)
 	if (subId != 0 && ticks > 0) {
 		Player* player = creature->getPlayer();
 		if (player) {
-			player->sendSpellCooldown(subId, ticks);
+			player->sendMoveCooldown(subId, ticks);
 		}
 	}
 	return true;
 }
 
-void ConditionSpellGroupCooldown::addCondition(Creature* creature, const Condition* condition)
+void ConditionMoveGroupCooldown::addCondition(Creature* creature, const Condition* condition)
 {
 	if (updateCondition(condition)) {
 		setTicks(condition->getTicks());
@@ -1898,13 +1898,13 @@ void ConditionSpellGroupCooldown::addCondition(Creature* creature, const Conditi
 		if (subId != 0 && ticks > 0) {
 			Player* player = creature->getPlayer();
 			if (player) {
-				player->sendSpellGroupCooldown(static_cast<SpellGroup_t>(subId), ticks);
+				player->sendMoveGroupCooldown(static_cast<MoveGroup_t>(subId), ticks);
 			}
 		}
 	}
 }
 
-bool ConditionSpellGroupCooldown::startCondition(Creature* creature)
+bool ConditionMoveGroupCooldown::startCondition(Creature* creature)
 {
 	if (!Condition::startCondition(creature)) {
 		return false;
@@ -1913,7 +1913,7 @@ bool ConditionSpellGroupCooldown::startCondition(Creature* creature)
 	if (subId != 0 && ticks > 0) {
 		Player* player = creature->getPlayer();
 		if (player) {
-			player->sendSpellGroupCooldown(static_cast<SpellGroup_t>(subId), ticks);
+			player->sendMoveGroupCooldown(static_cast<MoveGroup_t>(subId), ticks);
 		}
 	}
 	return true;

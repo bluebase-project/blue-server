@@ -32,7 +32,7 @@
 		<attack name="manadrain" interval="2000" chance="10" range="7" min="-60" max="-140">
 			<attribute key="areaEffect" value="smallplants" />
 		</attack>
-		<attack name="deepling spellsinger skill reducer" range="5" interval="2000" chance="10" />
+		<attack name="deepling movesinger skill reducer" range="5" interval="2000" chance="10" />
 	</attacks>
 	<defenses armor="20" defense="20">
 		<defense name="healing" interval="2000" chance="15" min="40" max="80">
@@ -57,7 +57,7 @@
 		<item name="eye of a deepling" chance="9380" />
 		<item name="deepling staff" chance="3130" />
 		<item name="necklace of the deep" chance="1330" />
-		<item name="spellsinger's seal" chance="25000" />
+		<item name="movesinger's seal" chance="25000" />
 		<item name="key to the Drowned Library" chance="20000" />
 		<item name="deepling filet" chance="20000" />
 		<item name="ornate crossbow" chance="39" />

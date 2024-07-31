@@ -505,7 +505,7 @@ enum PlayerFlags : uint64_t {
 	PlayerFlag_HasInfiniteMana = 1 << 10,
 	PlayerFlag_HasInfiniteSoul = 1 << 11,
 	PlayerFlag_HasNoExhaustion = 1 << 12,
-	PlayerFlag_CannotUseSpells = 1 << 13,
+	PlayerFlag_CannotUseMoves = 1 << 13,
 	PlayerFlag_CannotPickupItem = 1 << 14,
 	PlayerFlag_CanAlwaysLogin = 1 << 15,
 	PlayerFlag_CanBroadcast = 1 << 16,
@@ -526,7 +526,7 @@ enum PlayerFlags : uint64_t {
 	PlayerFlag_NotGenerateLoot = static_cast<uint64_t>(1) << 31,
 	// PlayerFlag with exponent 32 existed but was deprecated (feature dropped from client).
 	PlayerFlag_IgnoreProtectionZone = static_cast<uint64_t>(1) << 33,
-	PlayerFlag_IgnoreSpellCheck = static_cast<uint64_t>(1) << 34,
+	PlayerFlag_IgnoreMoveCheck = static_cast<uint64_t>(1) << 34,
 	PlayerFlag_IgnoreWeaponCheck = static_cast<uint64_t>(1) << 35,
 	PlayerFlag_CannotBeMuted = static_cast<uint64_t>(1) << 36,
 	PlayerFlag_IsAlwaysPremium = static_cast<uint64_t>(1) << 37,
@@ -549,7 +549,7 @@ enum ReloadTypes_t : uint8_t  {
 	RELOAD_TYPE_QUESTS,
 	RELOAD_TYPE_RAIDS,
 	RELOAD_TYPE_SCRIPTS,
-	RELOAD_TYPE_SPELLS,
+	RELOAD_TYPE_MOVES,
 	RELOAD_TYPE_TALKACTIONS,
 	RELOAD_TYPE_WEAPONS,
 };

@@ -67,7 +67,7 @@
 		<item name="gold coin" countmax="100" chance="50000" />
 		<item name="gold coin" countmax="39" chance="50000" />
 		<item name="platinum coin" chance="19720" />
-		<item id="2175" chance="10000" /><!-- spellbook -->
+		<item id="2175" chance="10000" /><!-- movebook -->
 		<item name="strong mana potion" chance="7700" />
 		<item name="black pearl" countmax="3" chance="5160" />
 		<item name="white pearl" chance="5000" />

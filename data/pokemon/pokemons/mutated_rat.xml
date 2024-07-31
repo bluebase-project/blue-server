@@ -71,7 +71,7 @@
 		<item name="green mushroom" chance="1390" />
 		<item name="stone herb" chance="4920" />
 		<item name="health potion" chance="560" />
-		<item name="spellbook of enlightenment" chance="290" />
+		<item name="movebook of enlightenment" chance="290" />
 		<item name="mutated rat tail" chance="3770" />
 	</loot>
 </pokemon>

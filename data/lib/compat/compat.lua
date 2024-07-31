@@ -231,14 +231,14 @@ do
 end
 
 do
-	local function SpellNewIndex(self, key, value)
-		if key == "onCastSpell" then
-			self:onCastSpell(value)
+	local function MoveNewIndex(self, key, value)
+		if key == "onCastMove" then
+			self:onCastMove(value)
 			return
 		end
 		rawset(self, key, value)
 	end
-	rawgetmetatable("Spell").__newindex = SpellNewIndex
+	rawgetmetatable("Move").__newindex = MoveNewIndex
 end
 
 do
@@ -537,8 +537,8 @@ function getPlayerFood(cid)
 	end
 	local c = player:getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT) return c and math.floor(c:getTicks() / 1000) or 0
 end
-function canPlayerLearnInstantSpell(cid, name) local p = Player(cid) return p and p:canLearnSpell(name) or false end
-function getPlayerLearnedInstantSpell(cid, name) local p = Player(cid) return p and p:hasLearnedSpell(name) or false end
+function canPlayerLearnInstantMove(cid, name) local p = Player(cid) return p and p:canLearnMove(name) or false end
+function getPlayerLearnedInstantMove(cid, name) local p = Player(cid) return p and p:hasLearnedMove(name) or false end
 function isPlayerGhost(cid) local p = Player(cid) return p and p:isInGhostMode() or false end
 function isPlayerPzLocked(cid) local p = Player(cid) return p and p:isPzLocked() or false end
 function isPremium(cid) local p = Player(cid) return p and p:isPremium() or false end
@@ -656,9 +656,9 @@ function doPlayerRemoveMount(cid, mountId) local p = Player(cid) return p and p:
 function doPlayerSendOutfitWindow(cid) local p = Player(cid) return p and p:sendOutfitWindow() or false end
 function doPlayerSendCancel(cid, text) local p = Player(cid) return p and p:sendCancelMessage(text) or false end
 function doPlayerFeed(cid, food) local p = Player(cid) return p and p:feed(food) or false end
-function playerLearnInstantSpell(cid, name) local p = Player(cid) return p and p:learnSpell(name) or false end
-doPlayerLearnInstantSpell = playerLearnInstantSpell
-function doPlayerUnlearnInstantSpell(cid, name) local p = Player(cid) return p and p:forgetSpell(name) or false end
+function playerLearnInstantMove(cid, name) local p = Player(cid) return p and p:learnMove(name) or false end
+doPlayerLearnInstantMove = playerLearnInstantMove
+function doPlayerUnlearnInstantMove(cid, name) local p = Player(cid) return p and p:forgetMove(name) or false end
 function doPlayerPopupFYI(cid, message) local p = Player(cid) return p and p:popupFYI(message) or false end
 function doSendTutorial(cid, tutorialId) local p = Player(cid) return p and p:sendTutorial(tutorialId) or false end
 doPlayerSendTutorial = doSendTutorial
@@ -1311,19 +1311,19 @@ function Guild.removeMember(self, player)
 	return player:getGuild() == self and player:setGuild(nil)
 end
 
-function getPlayerInstantSpellCount(cid) local p = Player(cid) return p and #p:getInstantSpells() end
-function getPlayerInstantSpellInfo(cid, spellId)
+function getPlayerInstantMoveCount(cid) local p = Player(cid) return p and #p:getInstantMoves() end
+function getPlayerInstantMoveInfo(cid, moveId)
 	local player = Player(cid)
 	if not player then
 		return false
 	end
 
-	local spell = Spell(spellId)
-	if not spell or not player:canCast(spell) then
+	local move = Move(moveId)
+	if not move or not player:canCast(move) then
 		return false
 	end
 
-	return spell
+	return move
 end
 
 function doSetItemOutfit(cid, item, time) local c = Creature(cid) return c and c:setItemOutfit(item, time) end

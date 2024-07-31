@@ -78,7 +78,7 @@ const char* getReturnMessage(ReturnValue value);
 
 int64_t OTSYS_TIME();
 
-SpellGroup_t stringToSpellGroup(const std::string& value);
+MoveGroup_t stringToMoveGroup(const std::string& value);
 
 template <typename E>
 auto format_as(E e)

@@ -48,31 +48,31 @@ struct summonBlock_t {
 	bool force = false;
 };
 
-class BaseSpell;
-struct spellBlock_t {
-	constexpr spellBlock_t() = default;
-	~spellBlock_t();
-	spellBlock_t(const spellBlock_t& other) = delete;
-	spellBlock_t& operator=(const spellBlock_t& other) = delete;
-	spellBlock_t(spellBlock_t&& other) :
-		spell(other.spell),
+class BaseMove;
+struct moveBlock_t {
+	constexpr moveBlock_t() = default;
+	~moveBlock_t();
+	moveBlock_t(const moveBlock_t& other) = delete;
+	moveBlock_t& operator=(const moveBlock_t& other) = delete;
+	moveBlock_t(moveBlock_t&& other) :
+		move(other.move),
 		chance(other.chance),
 		speed(other.speed),
 		range(other.range),
 		minCombatValue(other.minCombatValue),
 		maxCombatValue(other.maxCombatValue),
-		combatSpell(other.combatSpell),
+		combatMove(other.combatMove),
 		isMelee(other.isMelee) {
-		other.spell = nullptr;
+		other.move = nullptr;
 	}
 
-	BaseSpell* spell = nullptr;
+	BaseMove* move = nullptr;
 	uint32_t chance = 100;
 	uint32_t speed = 2000;
 	uint32_t range = 0;
 	int32_t minCombatValue = 0;
 	int32_t maxCombatValue = 0;
-	bool combatSpell = false;
+	bool combatMove = false;
 	bool isMelee = false;
 };
 
@@ -92,8 +92,8 @@ class PokemonType
 
 		std::vector<LootBlock> lootItems;
 		std::vector<std::string> scripts;
-		std::vector<spellBlock_t> attackSpells;
-		std::vector<spellBlock_t> defenseSpells;
+		std::vector<moveBlock_t> attackMoves;
+		std::vector<moveBlock_t> defenseMoves;
 		std::vector<summonBlock_t> summons;
 
 		Skulls_t skull = SKULL_NONE;
@@ -164,13 +164,13 @@ class PokemonType
 		void loadLoot(PokemonType* pokemonType, LootBlock lootBlock);
 };
 
-class PokemonSpell
+class PokemonMove
 {
 	public:
-		PokemonSpell() = default;
+		PokemonMove() = default;
 
-		PokemonSpell(const PokemonSpell&) = delete;
-		PokemonSpell& operator=(const PokemonSpell&) = delete;
+		PokemonMove(const PokemonMove&) = delete;
+		PokemonMove& operator=(const PokemonMove&) = delete;
 
 		std::string name = "";
 		std::string scriptName = "";
@@ -199,7 +199,7 @@ class PokemonSpell
 		bool isScripted = false;
 		bool needTarget = false;
 		bool needDirection = false;
-		bool combatSpell = false;
+		bool combatMove = false;
 		bool isMelee = false;
 
 		Outfit_t outfit = {};
@@ -224,7 +224,7 @@ class Pokemons
 		bool reload();
 
 		PokemonType* getPokemonType(const std::string& name, bool loadFromFile = true);
-		bool deserializeSpell(PokemonSpell* spell, spellBlock_t& sb, const std::string& description = "");
+		bool deserializeMove(PokemonMove* move, moveBlock_t& sb, const std::string& description = "");
 
 		std::unique_ptr<LuaScriptInterface> scriptInterface;
 		std::map<std::string, PokemonType> pokemons;
@@ -232,7 +232,7 @@ class Pokemons
 	private:
 		ConditionDamage* getDamageCondition(ConditionType_t conditionType,
 		                                    int32_t maxDamage, int32_t minDamage, int32_t startDamage, uint32_t tickInterval);
-		bool deserializeSpell(const pugi::xml_node& node, spellBlock_t& sb, const std::string& description = "");
+		bool deserializeMove(const pugi::xml_node& node, moveBlock_t& sb, const std::string& description = "");
 
 		PokemonType* loadPokemon(const std::string& file, const std::string& pokemonName, bool reloading = false);
 

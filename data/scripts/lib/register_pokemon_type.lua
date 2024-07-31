@@ -263,125 +263,125 @@ end
 registerPokemonType.attacks = function(mtype, mask)
 	if type(mask.attacks) == "table" then
 		for _, attack in pairs(mask.attacks) do
-			local spell = PokemonSpell()
+			local move = PokemonMove()
 			if attack.name then
 				if attack.name == "melee" then
-					spell:setType("melee")
+					move:setType("melee")
 					if attack.attack and attack.skill then
-						spell:setAttackValue(attack.attack, attack.skill)
+						move:setAttackValue(attack.attack, attack.skill)
 					end
 					if attack.minDamage and attack.maxDamage then
-						spell:setCombatValue(attack.minDamage, attack.maxDamage)
+						move:setCombatValue(attack.minDamage, attack.maxDamage)
 					end
 					if attack.interval then
-						spell:setInterval(attack.interval)
+						move:setInterval(attack.interval)
 					end
 					if attack.effect then
-						spell:setCombatEffect(attack.effect)
+						move:setCombatEffect(attack.effect)
 					end
 					if attack.condition then
 						if attack.condition.type then
-							spell:setConditionType(attack.condition.type)
+							move:setConditionType(attack.condition.type)
 						end
 						local startDamage = 0
 						if attack.condition.startDamage then
 							startDamage = attack.condition.startDamage
 						end
 						if attack.condition.minDamage and attack.condition.maxDamage then
-							spell:setConditionDamage(attack.condition.minDamage, attack.condition.maxDamage, startDamage)
+							move:setConditionDamage(attack.condition.minDamage, attack.condition.maxDamage, startDamage)
 						end
 						if attack.condition.duration then
-							spell:setConditionDuration(attack.condition.duration)
+							move:setConditionDuration(attack.condition.duration)
 						end
 						if attack.condition.interval then
-							spell:setConditionTickInterval(attack.condition.interval)
+							move:setConditionTickInterval(attack.condition.interval)
 						end
 					end
 				else
-					spell:setType(attack.name)
+					move:setType(attack.name)
 					if attack.type then
 						if attack.name == "combat" then
-							spell:setCombatType(attack.type)
+							move:setCombatType(attack.type)
 						else
-							spell:setConditionType(attack.type)
+							move:setConditionType(attack.type)
 						end
 					end
 					if attack.interval then
-						spell:setInterval(attack.interval)
+						move:setInterval(attack.interval)
 					end
 					if attack.chance then
-						spell:setChance(attack.chance)
+						move:setChance(attack.chance)
 					end
 					if attack.range then
-						spell:setRange(attack.range)
+						move:setRange(attack.range)
 					end
 					if attack.duration then
-						spell:setConditionDuration(attack.duration)
+						move:setConditionDuration(attack.duration)
 					end
 					if attack.speed then
 						if type(attack.speed) ~= "table" then
-							spell:setConditionSpeedChange(attack.speed)
+							move:setConditionSpeedChange(attack.speed)
 						elseif type(attack.speed) == "table" then
 							if attack.speed.min and attack.speed.max then
-								spell:setConditionSpeedChange(attack.speed.min, attack.speed.max)
+								move:setConditionSpeedChange(attack.speed.min, attack.speed.max)
 							end
 						end
 					end
 					if attack.target then
-						spell:setNeedTarget(attack.target)
+						move:setNeedTarget(attack.target)
 					end
 					if attack.length then
-						spell:setCombatLength(attack.length)
+						move:setCombatLength(attack.length)
 					end
 					if attack.spread then
-						spell:setCombatSpread(attack.spread)
+						move:setCombatSpread(attack.spread)
 					end
 					if attack.radius then
-						spell:setCombatRadius(attack.radius)
+						move:setCombatRadius(attack.radius)
 					end
 					if attack.minDamage and attack.maxDamage then
 						if attack.name == "combat" then
-							spell:setCombatValue(attack.minDamage, attack.maxDamage)
+							move:setCombatValue(attack.minDamage, attack.maxDamage)
 						else
 							local startDamage = 0
 							if attack.startDamage then
 								startDamage = attack.startDamage
 							end
-							spell:setConditionDamage(attack.minDamage, attack.maxDamage, startDamage)
+							move:setConditionDamage(attack.minDamage, attack.maxDamage, startDamage)
 						end
 					end
 					if attack.effect then
-						spell:setCombatEffect(attack.effect)
+						move:setCombatEffect(attack.effect)
 					end
 					if attack.shootEffect then
-						spell:setCombatShootEffect(attack.shootEffect)
+						move:setCombatShootEffect(attack.shootEffect)
 					end
 					if attack.name == "drunk" then
-						spell:setConditionType(CONDITION_DRUNK)
+						move:setConditionType(CONDITION_DRUNK)
 						if attack.drunkenness then
-							spell:setConditionDrunkenness(attack.drunkenness)
+							move:setConditionDrunkenness(attack.drunkenness)
 						end
 					end
 				end
 			elseif attack.script then
-				spell:setScriptName(attack.script)
+				move:setScriptName(attack.script)
 				if attack.interval then
-					spell:setInterval(attack.interval)
+					move:setInterval(attack.interval)
 				end
 				if attack.chance then
-					spell:setChance(attack.chance)
+					move:setChance(attack.chance)
 				end
 				if attack.minDamage and attack.maxDamage then
-					spell:setCombatValue(attack.minDamage, attack.maxDamage)
+					move:setCombatValue(attack.minDamage, attack.maxDamage)
 				end
 				if attack.target then
-					spell:setNeedTarget(attack.target)
+					move:setNeedTarget(attack.target)
 				end
 				if attack.direction then
-					spell:setNeedDirection(attack.direction)
+					move:setNeedDirection(attack.direction)
 				end
 			end
-			mtype:addAttack(spell)
+			mtype:addAttack(move)
 		end
 	end
 end
@@ -395,119 +395,119 @@ registerPokemonType.defenses = function(mtype, mask)
 		end
 		for _, defense in pairs(mask.defenses) do
 			if type(defense) == "table" then
-				local spell = PokemonSpell()
+				local move = PokemonMove()
 				if defense.name then
 					if defense.name == "melee" then
-						spell:setType("melee")
+						move:setType("melee")
 						if defense.attack and defense.skill then
-							spell:setAttackValue(defense.attack, defense.skill)
+							move:setAttackValue(defense.attack, defense.skill)
 						end
 						if defense.minDamage and defense.maxDamage then
-							spell:setCombatValue(defense.minDamage, defense.maxDamage)
+							move:setCombatValue(defense.minDamage, defense.maxDamage)
 						end
 						if defense.interval then
-							spell:setInterval(defense.interval)
+							move:setInterval(defense.interval)
 						end
 						if defense.effect then
-							spell:setCombatEffect(defense.effect)
+							move:setCombatEffect(defense.effect)
 						end
 						if defense.condition then
 							if defense.condition.type then
-								spell:setConditionType(defense.condition.type)
+								move:setConditionType(defense.condition.type)
 							end
 							local startDamage = 0
 							if defense.condition.startDamage then
 								startDamage = defense.condition.startDamage
 							end
 							if defense.condition.minDamage and defense.condition.maxDamage then
-								spell:setConditionDamage(defense.condition.minDamage, defense.condition.maxDamage, startDamage)
+								move:setConditionDamage(defense.condition.minDamage, defense.condition.maxDamage, startDamage)
 							end
 							if defense.condition.duration then
-								spell:setConditionDuration(defense.condition.duration)
+								move:setConditionDuration(defense.condition.duration)
 							end
 							if defense.condition.interval then
-								spell:setConditionTickInterval(defense.condition.interval)
+								move:setConditionTickInterval(defense.condition.interval)
 							end
 						end
 					else
-						spell:setType(defense.name)
+						move:setType(defense.name)
 						if defense.type then
 							if defense.name == "combat" then
-								spell:setCombatType(defense.type)
+								move:setCombatType(defense.type)
 							else
-								spell:setConditionType(defense.type)
+								move:setConditionType(defense.type)
 							end
 						end
 						if defense.interval then
-							spell:setInterval(defense.interval)
+							move:setInterval(defense.interval)
 						end
 						if defense.chance then
-							spell:setChance(defense.chance)
+							move:setChance(defense.chance)
 						end
 						if defense.range then
-							spell:setRange(defense.range)
+							move:setRange(defense.range)
 						end
 						if defense.duration then
-							spell:setConditionDuration(defense.duration)
+							move:setConditionDuration(defense.duration)
 						end
 						if defense.speed then
 							if type(defense.speed) ~= "table" then
-								spell:setConditionSpeedChange(defense.speed)
+								move:setConditionSpeedChange(defense.speed)
 							elseif type(defense.speed) == "table" then
 								if defense.speed.min and defense.speed.max then
-									spell:setConditionSpeedChange(defense.speed.min, defense.speed.max)
+									move:setConditionSpeedChange(defense.speed.min, defense.speed.max)
 								end
 							end
 						end
 						if defense.target then
-							spell:setNeedTarget(defense.target)
+							move:setNeedTarget(defense.target)
 						end
 						if defense.length then
-							spell:setCombatLength(defense.length)
+							move:setCombatLength(defense.length)
 						end
 						if defense.spread then
-							spell:setCombatSpread(defense.spread)
+							move:setCombatSpread(defense.spread)
 						end
 						if defense.radius then
-							spell:setCombatRadius(defense.radius)
+							move:setCombatRadius(defense.radius)
 						end
 						if defense.minDamage and defense.maxDamage then
 							if defense.name == "combat" then
-								spell:setCombatValue(defense.minDamage, defense.maxDamage)
+								move:setCombatValue(defense.minDamage, defense.maxDamage)
 							else
 								local startDamage = 0
 								if defense.startDamage then
 									startDamage = defense.startDamage
 								end
-								spell:setConditionDamage(defense.minDamage, defense.maxDamage, startDamage)
+								move:setConditionDamage(defense.minDamage, defense.maxDamage, startDamage)
 							end
 						end
 						if defense.effect then
-							spell:setCombatEffect(defense.effect)
+							move:setCombatEffect(defense.effect)
 						end
 						if defense.shootEffect then
-							spell:setCombatShootEffect(defense.shootEffect)
+							move:setCombatShootEffect(defense.shootEffect)
 						end
 					end
 				elseif defense.script then
-					spell:setScriptName(defense.script)
+					move:setScriptName(defense.script)
 					if defense.interval then
-						spell:setInterval(defense.interval)
+						move:setInterval(defense.interval)
 					end
 					if defense.chance then
-						spell:setChance(defense.chance)
+						move:setChance(defense.chance)
 					end
 					if defense.minDamage and defense.maxDamage then
-						spell:setCombatValue(defense.minDamage, defense.maxDamage)
+						move:setCombatValue(defense.minDamage, defense.maxDamage)
 					end
 					if defense.target then
-						spell:setNeedTarget(defense.target)
+						move:setNeedTarget(defense.target)
 					end
 					if defense.direction then
-						spell:setNeedDirection(defense.direction)
+						move:setNeedDirection(defense.direction)
 					end
 				end
-				mtype:addDefense(spell)
+				mtype:addDefense(move)
 			end
 		end
 	end

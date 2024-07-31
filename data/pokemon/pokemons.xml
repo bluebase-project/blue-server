@@ -132,7 +132,7 @@
 	<pokemon name="Deepling Guard" file="pokemons/deepling_guard.xml" />
 	<pokemon name="Deepling Master Librarian" file="pokemons/deepling_master_librarian.xml" />
 	<pokemon name="Deepling Scout" file="pokemons/deepling_scout.xml" />
-	<pokemon name="Deepling Spellsinger" file="pokemons/deepling_spellsinger.xml" />
+	<pokemon name="Deepling Movesinger" file="pokemons/deepling_movesinger.xml" />
 	<pokemon name="Deepling Tyrant" file="pokemons/deepling_tyrant.xml" />
 	<pokemon name="Deepling Warrior" file="pokemons/deepling_warrior.xml" />
 	<pokemon name="Deepling worker" file="pokemons/deepling_worker.xml" />
@@ -169,7 +169,7 @@
 	<pokemon name="Dragonling" file="pokemons/dragonling.xml" />
 	<pokemon name="Draken Abomination" file="pokemons/draken_abomination.xml" />
 	<pokemon name="Draken Elite" file="pokemons/draken_elite.xml" />
-	<pokemon name="Draken Spellweaver" file="pokemons/draken_spellweaver.xml" />
+	<pokemon name="Draken Moveweaver" file="pokemons/draken_moveweaver.xml" />
 	<pokemon name="Draken Warmaster" file="pokemons/draken_warmaster.xml" />
 	<pokemon name="Draptor" file="pokemons/draptor.xml" />
 	<pokemon name="Drasilla" file="pokemons/drasilla.xml" />

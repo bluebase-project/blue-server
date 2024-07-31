@@ -67,7 +67,7 @@
 		<item name="great mana potion" countmax="5" chance="23170" />
 		<item name="great health potion" countmax="5" chance="26830" />
 		<item name="focus cape" chance="4880" />
-		<item name="spellbook of mind control" chance="610" />
+		<item name="movebook of mind control" chance="610" />
 		<item name="royal tapestry" chance="1220" />
 		<item name="luminous orb" chance="4270" />
 		<item id="13940" chance="1220" /><!-- elemental spikes -->
