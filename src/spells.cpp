@@ -6,13 +6,13 @@
 #include "combat.h"
 #include "configmanager.h"
 #include "game.h"
-#include "monster.h"
+#include "pokemon.h"
 #include "pugicast.h"
 #include "spells.h"
 
 extern Game g_game;
 extern Spells* g_spells;
-extern Monsters g_monsters;
+extern Pokemons g_pokemons;
 extern Vocations g_vocations;
 extern ConfigManager g_config;
 extern LuaEnvironment g_luaEnvironment;

@@ -55,10 +55,10 @@ function flowerPot.onUse(player, item, fromPosition, target, toPosition, isHotke
 	for _, flower in pairs(flowers) do
 		if target.itemid == flower.itemid then
 			if (flower.watered == false and flower.advance == false) then
-				player:say(flower.msg, TALKTYPE_MONSTER_SAY)
+				player:say(flower.msg, TALKTYPE_POKEMON_SAY)
 			elseif (flower.watered == true and flower.advance == false) then
 				target:transform(flower.after)
-				player:say(flower.msg, TALKTYPE_MONSTER_SAY)
+				player:say(flower.msg, TALKTYPE_POKEMON_SAY)
 				toPosition:sendMagicEffect(CONST_ME_LOSEENERGY)
 				target:decay()
 			elseif (flower.watered == true and flower.advance == true) then
@@ -70,7 +70,7 @@ function flowerPot.onUse(player, item, fromPosition, target, toPosition, isHotke
 					target:transform(flower.after[i])
 				end
 				toPosition:sendMagicEffect(CONST_ME_LOSEENERGY)
-				player:say(flower.msg[i], TALKTYPE_MONSTER_SAY)
+				player:say(flower.msg[i], TALKTYPE_POKEMON_SAY)
 				target:decay()
 			end
 		break

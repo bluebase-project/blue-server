@@ -3,10 +3,10 @@ condition:setTicks(180000)
 
 function onCastSpell(creature, variant)
 	local returnValue = RETURNVALUE_NOERROR
-	local monsterType = MonsterType(variant:getString())
-	if not monsterType then
+	local pokemonType = PokemonType(variant:getString())
+	if not pokemonType then
 		returnValue = RETURNVALUE_CREATUREDOESNOTEXIST
-	elseif not creature:hasFlag(PlayerFlag_CanIllusionAll) and not monsterType:isIllusionable() then
+	elseif not creature:hasFlag(PlayerFlag_CanIllusionAll) and not pokemonType:isIllusionable() then
 		returnValue = RETURNVALUE_NOTPOSSIBLE
 	end
 
@@ -16,7 +16,7 @@ function onCastSpell(creature, variant)
 		return false
 	end
 
-	condition:setOutfit(monsterType:getOutfit())
+	condition:setOutfit(pokemonType:getOutfit())
 	creature:addCondition(condition)
 	creature:getPosition():sendMagicEffect(CONST_ME_MAGIC_BLUE)
 	return true

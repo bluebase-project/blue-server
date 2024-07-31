@@ -8,7 +8,7 @@ function ferumbrasStaff.onUse(player, item, fromPosition, target, toPosition, is
 	end
 	item:getPosition():sendMagicEffect(CONST_ME_MAGIC_RED)
 	item:decay()
-	player:say("Magical sparks whirl around the staff and suddenly it changes its appearance.", TALKTYPE_MONSTER_SAY)
+	player:say("Magical sparks whirl around the staff and suddenly it changes its appearance.", TALKTYPE_POKEMON_SAY)
 	return true
 end
 

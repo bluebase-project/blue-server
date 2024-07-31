@@ -44,7 +44,7 @@ function usableItemMounts.onUse(player, item, fromPosition, target, toPosition, 
 
 	player:addMount(useItem.mountId)
 	player:addAchievement("Natural Born Cowboy")
-	player:say(useItem.tameMessage, TALKTYPE_MONSTER_SAY)
+	player:say(useItem.tameMessage, TALKTYPE_POKEMON_SAY)
 	item:remove(1)
 	return true
 end

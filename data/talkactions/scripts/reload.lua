@@ -23,8 +23,8 @@ local reloadTypes = {
 
 	["items"] = RELOAD_TYPE_ITEMS,
 
-	["monster"] = RELOAD_TYPE_MONSTERS,
-	["monsters"] = RELOAD_TYPE_MONSTERS,
+	["pokemon"] = RELOAD_TYPE_POKEMONS,
+	["pokemons"] = RELOAD_TYPE_POKEMONS,
 
 	["mount"] = RELOAD_TYPE_MOUNTS,
 	["mounts"] = RELOAD_TYPE_MOUNTS,

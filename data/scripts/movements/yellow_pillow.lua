@@ -5,7 +5,7 @@ function yellowPillow.onStepIn(player, item, position, fromPosition)
 	if not player or player:isInGhostMode() then
 		return true
 	end
-	player:say("Faaart!", TALKTYPE_MONSTER_SAY)
+	player:say("Faaart!", TALKTYPE_POKEMON_SAY)
 	item:getPosition():sendMagicEffect(CONST_ME_POFF)
 	return true
 end

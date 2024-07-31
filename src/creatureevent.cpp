@@ -156,7 +156,7 @@ CreatureEvent::CreatureEvent(LuaScriptInterface* interface) :
 
 bool CreatureEvent::configureEvent(const pugi::xml_node& node)
 {
-	// Name that will be used in monster xml files and
+	// Name that will be used in pokemon xml files and
 	// lua function to register events to reference this event
 	pugi::xml_attribute nameAttribute = node.attribute("name");
 	if (!nameAttribute) {

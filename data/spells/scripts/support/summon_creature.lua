@@ -4,17 +4,17 @@ function onCastSpell(creature, variant)
 		return false
 	end
 
-	local monsterName = variant:getString()
-	local monsterType = MonsterType(monsterName)
+	local pokemonName = variant:getString()
+	local pokemonType = PokemonType(pokemonName)
 
-	if not monsterType then
+	if not pokemonType then
 		creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
 		creature:getPosition():sendMagicEffect(CONST_ME_POFF)
 		return false
 	end
 
 	if not creature:hasFlag(PlayerFlag_CanSummonAll) then
-		if not monsterType:isSummonable() then
+		if not pokemonType:isSummonable() then
 			creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
 			creature:getPosition():sendMagicEffect(CONST_ME_POFF)
 			return false
@@ -27,7 +27,7 @@ function onCastSpell(creature, variant)
 		end
 	end
 
-	local manaCost = monsterType:getManaCost()
+	local manaCost = pokemonType:getManaCost()
 	if creature:getMana() < manaCost and not creature:hasFlag(PlayerFlag_HasInfiniteMana) then
 		creature:sendCancelMessage(RETURNVALUE_NOTENOUGHMANA)
 		creature:getPosition():sendMagicEffect(CONST_ME_POFF)
@@ -35,7 +35,7 @@ function onCastSpell(creature, variant)
 	end
 
 	local position = creature:getPosition()
-	local summon = Game.createMonster(monsterName, position, true)
+	local summon = Game.createPokemon(pokemonName, position, true)
 	if not summon then
 		creature:sendCancelMessage(RETURNVALUE_NOTENOUGHROOM)
 		position:sendMagicEffect(CONST_ME_POFF)

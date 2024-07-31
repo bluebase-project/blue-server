@@ -12,11 +12,11 @@ function blessingCharms.onUse(player, item, fromPosition, target, toPosition, is
 	local blessItem = items[item.itemid]
 	if blessItem then
 		if player:hasBlessing(blessItem.id) then
-			player:say("You already possess this blessing.", TALKTYPE_MONSTER_SAY)
+			player:say("You already possess this blessing.", TALKTYPE_POKEMON_SAY)
 			return true
 		end
 		player:addBlessing(blessItem.id)
-		player:say(blessItem.text, TALKTYPE_MONSTER_SAY)
+		player:say(blessItem.text, TALKTYPE_POKEMON_SAY)
 		player:getPosition():sendMagicEffect(blessItem.effect)
 		item:remove(1)
 	end

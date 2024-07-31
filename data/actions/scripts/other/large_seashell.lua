@@ -12,13 +12,13 @@ function onUse(player, item, fromPosition, target, toPosition, isHotkey)
 		else
 			msg = "Nothing is inside."
 		end
-		player:say(msg, TALKTYPE_MONSTER_SAY, false, player, item:getPosition())
+		player:say(msg, TALKTYPE_POKEMON_SAY, false, player, item:getPosition())
 		item:transform(7553)
 		item:decay()
 		player:setStorageValue(PlayerStorageKeys.delayLargeSeaShell, os.time() + 20 * 60 * 60)
 		item:getPosition():sendMagicEffect(CONST_ME_BUBBLES)
 	else
-		player:say("You have already opened a shell today.", TALKTYPE_MONSTER_SAY, false, player, item:getPosition())
+		player:say("You have already opened a shell today.", TALKTYPE_POKEMON_SAY, false, player, item:getPosition())
 	end
 	return true
 end

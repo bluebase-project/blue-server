@@ -14,11 +14,11 @@ local messages = {
 
 function onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	if player:getStorageValue(PlayerStorageKeys.delayWallMirror) <= os.time() then
-		player:say(messages[math.random(1, #messages)], TALKTYPE_MONSTER_SAY)
+		player:say(messages[math.random(1, #messages)], TALKTYPE_POKEMON_SAY)
 		player:setStorageValue(PlayerStorageKeys.delayWallMirror, os.time() + 20 * 60 * 60)
 		player:addAchievementProgress("Vanity", 300)
 	else
-		player:say("Don't be so vain about your appearance.", TALKTYPE_MONSTER_SAY)
+		player:say("Don't be so vain about your appearance.", TALKTYPE_POKEMON_SAY)
 	end
 	return true
 end

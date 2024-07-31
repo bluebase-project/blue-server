@@ -5,7 +5,7 @@
 
 #include "creature.h"
 #include "game.h"
-#include "monster.h"
+#include "pokemon.h"
 #include "configmanager.h"
 #include "scheduler.h"
 
@@ -227,7 +227,7 @@ void Creature::onWalk(Direction& dir)
 	}
 
 	dir = static_cast<Direction>(rand % 4);
-	g_game.internalCreatureSay(this, TALKTYPE_MONSTER_SAY, "Hicks!", false);
+	g_game.internalCreatureSay(this, TALKTYPE_POKEMON_SAY, "Hicks!", false);
 }
 
 bool Creature::getNextStep(Direction& dir, uint32_t&)
@@ -713,7 +713,7 @@ void Creature::onDeath()
 
 bool Creature::dropCorpse(Creature* lastHitCreature, Creature* mostDamageCreature, bool lastHitUnjustified, bool mostDamageUnjustified)
 {
-	if (!lootDrop && getMonster()) {
+	if (!lootDrop && getPokemon()) {
 		if (master) {
 			//scripting event - onDeath
 			const CreatureEventList& deathEvents = getCreatureEvents(CREATURE_EVENT_DEATH);
@@ -908,14 +908,14 @@ void Creature::goToFollowCreature()
 		FindPathParams fpp;
 		getPathSearchParams(followCreature, fpp);
 
-		Monster* monster = getMonster();
-		if (monster && !monster->getMaster() && (monster->isFleeing() || fpp.maxTargetDist > 1)) {
+		Pokemon* pokemon = getPokemon();
+		if (pokemon && !pokemon->getMaster() && (pokemon->isFleeing() || fpp.maxTargetDist > 1)) {
 			Direction dir = DIRECTION_NONE;
 
-			if (monster->isFleeing()) {
-				monster->getDistanceStep(followCreature->getPosition(), dir, true);
+			if (pokemon->isFleeing()) {
+				pokemon->getDistanceStep(followCreature->getPosition(), dir, true);
 			} else { // maxTargetDist > 1
-				if (!monster->getDistanceStep(followCreature->getPosition(), dir)) {
+				if (!pokemon->getDistanceStep(followCreature->getPosition(), dir)) {
 					// if we can't get anything then let the A* calculate
 					listWalkDir.clear();
 					if (getPathTo(followCreature->getPosition(), listWalkDir, fpp)) {
@@ -1410,8 +1410,8 @@ int64_t Creature::getStepDuration() const
 	double duration = std::floor(1000 * groundSpeed / calculatedStepSpeed);
 	int64_t stepDuration = std::ceil(duration / 50) * 50;
 
-	const Monster* monster = getMonster();
-	if (monster && monster->isTargetNearby() && !monster->isFleeing() && !monster->getMaster()) {
+	const Pokemon* pokemon = getPokemon();
+	if (pokemon && pokemon->isTargetNearby() && !pokemon->isFleeing() && !pokemon->getMaster()) {
 		stepDuration *= 2;
 	}
 

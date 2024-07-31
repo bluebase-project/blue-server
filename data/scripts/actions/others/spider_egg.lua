@@ -3,11 +3,11 @@ local spiderEgg = Action()
 function spiderEgg.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	local chance = math.random(100)
 	if chance >= 50 and chance < 83 then
-		Game.createMonster("Spider", fromPosition)
+		Game.createPokemon("Spider", fromPosition)
 	elseif chance >= 83 and chance < 97 then
-		Game.createMonster("Poison Spider", fromPosition)
+		Game.createPokemon("Poison Spider", fromPosition)
 	elseif chance >= 97 and chance < 100 then
-		Game.createMonster("Tarantula", fromPosition)
+		Game.createPokemon("Tarantula", fromPosition)
 	else
 		item:getPosition():sendMagicEffect(CONST_ME_POFF)
 	end

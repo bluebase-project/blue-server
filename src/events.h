@@ -50,9 +50,9 @@ class Events
 		int32_t playerOnGainSkillTries = -1;
 		int32_t playerOnWrapItem = -1;
 
-		// Monster
-		int32_t monsterOnDropLoot = -1;
-		int32_t monsterOnSpawn = -1;
+		// Pokemon
+		int32_t pokemonOnDropLoot = -1;
+		int32_t pokemonOnSpawn = -1;
 	};
 
 	public:
@@ -92,9 +92,9 @@ class Events
 		void eventPlayerOnGainSkillTries(Player* player, skills_t skill, uint64_t& tries);
 		void eventPlayerOnWrapItem(Player* player, Item* item);
 
-		// Monster
-		void eventMonsterOnDropLoot(Monster* monster, Container* corpse);
-		bool eventMonsterOnSpawn(Monster* monster, const Position& position, bool startup, bool artificial);
+		// Pokemon
+		void eventPokemonOnDropLoot(Pokemon* pokemon, Container* corpse);
+		bool eventPokemonOnSpawn(Pokemon* pokemon, const Position& position, bool startup, bool artificial);
 
 		int32_t getScriptId(EventInfoId eventInfoId) {
 			switch (eventInfoId)

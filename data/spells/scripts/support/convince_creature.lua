@@ -1,14 +1,14 @@
 function onCastSpell(creature, variant, isHotkey)
 	local target = Creature(variant:getNumber())
-	if not target or not target:isMonster() then
+	if not target or not target:isPokemon() then
 		creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
 		creature:getPosition():sendMagicEffect(CONST_ME_POFF)
 		return false
 	end
 
-	local monsterType = target:getType()
+	local pokemonType = target:getType()
 	if not creature:hasFlag(PlayerFlag_CanConvinceAll) then
-		if not monsterType:isConvinceable() then
+		if not pokemonType:isConvinceable() then
 			creature:sendCancelMessage(RETURNVALUE_NOTPOSSIBLE)
 			creature:getPosition():sendMagicEffect(CONST_ME_POFF)
 			return false

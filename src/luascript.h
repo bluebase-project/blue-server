@@ -36,7 +36,7 @@ class Combat;
 using Combat_ptr = std::shared_ptr<Combat>;
 class Condition;
 class Npc;
-class Monster;
+class Pokemon;
 class InstantSpell;
 
 enum {
@@ -60,7 +60,7 @@ enum LuaDataType {
 	LuaData_Container,
 	LuaData_Teleport,
 	LuaData_Player,
-	LuaData_Monster,
+	LuaData_Pokemon,
 	LuaData_Npc,
 	LuaData_Tile,
 };
@@ -552,10 +552,10 @@ class LuaScriptInterface
 
 		static int luaGameGetExperienceStage(lua_State* L);
 		static int luaGameGetExperienceForLevel(lua_State* L);
-		static int luaGameGetMonsterCount(lua_State* L);
+		static int luaGameGetPokemonCount(lua_State* L);
 		static int luaGameGetPlayerCount(lua_State* L);
 		static int luaGameGetNpcCount(lua_State* L);
-		static int luaGameGetMonsterTypes(lua_State* L);
+		static int luaGameGetPokemonTypes(lua_State* L);
 
 		static int luaGameGetTowns(lua_State* L);
 		static int luaGameGetHouses(lua_State* L);
@@ -571,10 +571,10 @@ class LuaScriptInterface
 
 		static int luaGameCreateItem(lua_State* L);
 		static int luaGameCreateContainer(lua_State* L);
-		static int luaGameCreateMonster(lua_State* L);
+		static int luaGameCreatePokemon(lua_State* L);
 		static int luaGameCreateNpc(lua_State* L);
 		static int luaGameCreateTile(lua_State* L);
-		static int luaGameCreateMonsterType(lua_State* L);
+		static int luaGameCreatePokemonType(lua_State* L);
 
 		static int luaGameStartRaid(lua_State* L);
 
@@ -1036,40 +1036,40 @@ class LuaScriptInterface
 
 		static int luaPlayerGetStoreInbox(lua_State* L);
 
-		// Monster
-		static int luaMonsterCreate(lua_State* L);
+		// Pokemon
+		static int luaPokemonCreate(lua_State* L);
 
-		static int luaMonsterIsMonster(lua_State* L);
+		static int luaPokemonIsPokemon(lua_State* L);
 
-		static int luaMonsterGetType(lua_State* L);
+		static int luaPokemonGetType(lua_State* L);
 
-		static int luaMonsterRename(lua_State* L);
+		static int luaPokemonRename(lua_State* L);
 
-		static int luaMonsterGetSpawnPosition(lua_State* L);
-		static int luaMonsterIsInSpawnRange(lua_State* L);
+		static int luaPokemonGetSpawnPosition(lua_State* L);
+		static int luaPokemonIsInSpawnRange(lua_State* L);
 
-		static int luaMonsterIsIdle(lua_State* L);
-		static int luaMonsterSetIdle(lua_State* L);
+		static int luaPokemonIsIdle(lua_State* L);
+		static int luaPokemonSetIdle(lua_State* L);
 
-		static int luaMonsterIsTarget(lua_State* L);
-		static int luaMonsterIsOpponent(lua_State* L);
-		static int luaMonsterIsFriend(lua_State* L);
+		static int luaPokemonIsTarget(lua_State* L);
+		static int luaPokemonIsOpponent(lua_State* L);
+		static int luaPokemonIsFriend(lua_State* L);
 
-		static int luaMonsterAddFriend(lua_State* L);
-		static int luaMonsterRemoveFriend(lua_State* L);
-		static int luaMonsterGetFriendList(lua_State* L);
-		static int luaMonsterGetFriendCount(lua_State* L);
+		static int luaPokemonAddFriend(lua_State* L);
+		static int luaPokemonRemoveFriend(lua_State* L);
+		static int luaPokemonGetFriendList(lua_State* L);
+		static int luaPokemonGetFriendCount(lua_State* L);
 
-		static int luaMonsterAddTarget(lua_State* L);
-		static int luaMonsterRemoveTarget(lua_State* L);
-		static int luaMonsterGetTargetList(lua_State* L);
-		static int luaMonsterGetTargetCount(lua_State* L);
+		static int luaPokemonAddTarget(lua_State* L);
+		static int luaPokemonRemoveTarget(lua_State* L);
+		static int luaPokemonGetTargetList(lua_State* L);
+		static int luaPokemonGetTargetCount(lua_State* L);
 
-		static int luaMonsterSelectTarget(lua_State* L);
-		static int luaMonsterSearchTarget(lua_State* L);
+		static int luaPokemonSelectTarget(lua_State* L);
+		static int luaPokemonSearchTarget(lua_State* L);
 
-		static int luaMonsterIsWalkingToSpawn(lua_State* L);
-		static int luaMonsterWalkToSpawn(lua_State* L);
+		static int luaPokemonIsWalkingToSpawn(lua_State* L);
+		static int luaPokemonWalkToSpawn(lua_State* L);
 
 		// Npc
 		static int luaNpcCreate(lua_State* L);
@@ -1290,80 +1290,80 @@ class LuaScriptInterface
 		static int luaOutfitCreate(lua_State* L);
 		static int luaOutfitCompare(lua_State* L);
 
-		// MonsterType
-		static int luaMonsterTypeCreate(lua_State* L);
+		// PokemonType
+		static int luaPokemonTypeCreate(lua_State* L);
 
-		static int luaMonsterTypeIsAttackable(lua_State* L);
-		static int luaMonsterTypeIsChallengeable(lua_State* L);
-		static int luaMonsterTypeIsConvinceable(lua_State* L);
-		static int luaMonsterTypeIsSummonable(lua_State* L);
-		static int luaMonsterTypeIsIgnoringSpawnBlock(lua_State* L);
-		static int luaMonsterTypeIsIllusionable(lua_State* L);
-		static int luaMonsterTypeIsHostile(lua_State* L);
-		static int luaMonsterTypeIsPushable(lua_State* L);
-		static int luaMonsterTypeIsHealthHidden(lua_State* L);
-		static int luaMonsterTypeIsBoss(lua_State* L);
+		static int luaPokemonTypeIsAttackable(lua_State* L);
+		static int luaPokemonTypeIsChallengeable(lua_State* L);
+		static int luaPokemonTypeIsConvinceable(lua_State* L);
+		static int luaPokemonTypeIsSummonable(lua_State* L);
+		static int luaPokemonTypeIsIgnoringSpawnBlock(lua_State* L);
+		static int luaPokemonTypeIsIllusionable(lua_State* L);
+		static int luaPokemonTypeIsHostile(lua_State* L);
+		static int luaPokemonTypeIsPushable(lua_State* L);
+		static int luaPokemonTypeIsHealthHidden(lua_State* L);
+		static int luaPokemonTypeIsBoss(lua_State* L);
 
-		static int luaMonsterTypeCanPushItems(lua_State* L);
-		static int luaMonsterTypeCanPushCreatures(lua_State* L);
+		static int luaPokemonTypeCanPushItems(lua_State* L);
+		static int luaPokemonTypeCanPushCreatures(lua_State* L);
 
-		static int luaMonsterTypeCanWalkOnEnergy(lua_State* L);
-		static int luaMonsterTypeCanWalkOnFire(lua_State* L);
-		static int luaMonsterTypeCanWalkOnPoison(lua_State* L);
+		static int luaPokemonTypeCanWalkOnEnergy(lua_State* L);
+		static int luaPokemonTypeCanWalkOnFire(lua_State* L);
+		static int luaPokemonTypeCanWalkOnPoison(lua_State* L);
 
-		static int luaMonsterTypeName(lua_State* L);
-		static int luaMonsterTypeNameDescription(lua_State* L);
+		static int luaPokemonTypeName(lua_State* L);
+		static int luaPokemonTypeNameDescription(lua_State* L);
 
-		static int luaMonsterTypeHealth(lua_State* L);
-		static int luaMonsterTypeMaxHealth(lua_State* L);
-		static int luaMonsterTypeRunHealth(lua_State* L);
-		static int luaMonsterTypeExperience(lua_State* L);
-		static int luaMonsterTypeSkull(lua_State* L);
+		static int luaPokemonTypeHealth(lua_State* L);
+		static int luaPokemonTypeMaxHealth(lua_State* L);
+		static int luaPokemonTypeRunHealth(lua_State* L);
+		static int luaPokemonTypeExperience(lua_State* L);
+		static int luaPokemonTypeSkull(lua_State* L);
 
-		static int luaMonsterTypeCombatImmunities(lua_State* L);
-		static int luaMonsterTypeConditionImmunities(lua_State* L);
+		static int luaPokemonTypeCombatImmunities(lua_State* L);
+		static int luaPokemonTypeConditionImmunities(lua_State* L);
 
-		static int luaMonsterTypeGetAttackList(lua_State* L);
-		static int luaMonsterTypeAddAttack(lua_State* L);
+		static int luaPokemonTypeGetAttackList(lua_State* L);
+		static int luaPokemonTypeAddAttack(lua_State* L);
 
-		static int luaMonsterTypeGetDefenseList(lua_State* L);
-		static int luaMonsterTypeAddDefense(lua_State* L);
+		static int luaPokemonTypeGetDefenseList(lua_State* L);
+		static int luaPokemonTypeAddDefense(lua_State* L);
 
-		static int luaMonsterTypeGetElementList(lua_State* L);
-		static int luaMonsterTypeAddElement(lua_State* L);
+		static int luaPokemonTypeGetElementList(lua_State* L);
+		static int luaPokemonTypeAddElement(lua_State* L);
 
-		static int luaMonsterTypeGetVoices(lua_State* L);
-		static int luaMonsterTypeAddVoice(lua_State* L);
+		static int luaPokemonTypeGetVoices(lua_State* L);
+		static int luaPokemonTypeAddVoice(lua_State* L);
 
-		static int luaMonsterTypeGetLoot(lua_State* L);
-		static int luaMonsterTypeAddLoot(lua_State* L);
+		static int luaPokemonTypeGetLoot(lua_State* L);
+		static int luaPokemonTypeAddLoot(lua_State* L);
 
-		static int luaMonsterTypeGetCreatureEvents(lua_State* L);
-		static int luaMonsterTypeRegisterEvent(lua_State* L);
+		static int luaPokemonTypeGetCreatureEvents(lua_State* L);
+		static int luaPokemonTypeRegisterEvent(lua_State* L);
 
-		static int luaMonsterTypeEventOnCallback(lua_State* L);
-		static int luaMonsterTypeEventType(lua_State* L);
+		static int luaPokemonTypeEventOnCallback(lua_State* L);
+		static int luaPokemonTypeEventType(lua_State* L);
 
-		static int luaMonsterTypeGetSummonList(lua_State* L);
-		static int luaMonsterTypeAddSummon(lua_State* L);
+		static int luaPokemonTypeGetSummonList(lua_State* L);
+		static int luaPokemonTypeAddSummon(lua_State* L);
 
-		static int luaMonsterTypeMaxSummons(lua_State* L);
+		static int luaPokemonTypeMaxSummons(lua_State* L);
 
-		static int luaMonsterTypeArmor(lua_State* L);
-		static int luaMonsterTypeDefense(lua_State* L);
-		static int luaMonsterTypeOutfit(lua_State* L);
-		static int luaMonsterTypeRace(lua_State* L);
-		static int luaMonsterTypeCorpseId(lua_State* L);
-		static int luaMonsterTypeManaCost(lua_State* L);
-		static int luaMonsterTypeBaseSpeed(lua_State* L);
-		static int luaMonsterTypeLight(lua_State* L);
+		static int luaPokemonTypeArmor(lua_State* L);
+		static int luaPokemonTypeDefense(lua_State* L);
+		static int luaPokemonTypeOutfit(lua_State* L);
+		static int luaPokemonTypeRace(lua_State* L);
+		static int luaPokemonTypeCorpseId(lua_State* L);
+		static int luaPokemonTypeManaCost(lua_State* L);
+		static int luaPokemonTypeBaseSpeed(lua_State* L);
+		static int luaPokemonTypeLight(lua_State* L);
 
-		static int luaMonsterTypeStaticAttackChance(lua_State* L);
-		static int luaMonsterTypeTargetDistance(lua_State* L);
-		static int luaMonsterTypeYellChance(lua_State* L);
-		static int luaMonsterTypeYellSpeedTicks(lua_State* L);
-		static int luaMonsterTypeChangeTargetChance(lua_State* L);
-		static int luaMonsterTypeChangeTargetSpeed(lua_State* L);
+		static int luaPokemonTypeStaticAttackChance(lua_State* L);
+		static int luaPokemonTypeTargetDistance(lua_State* L);
+		static int luaPokemonTypeYellChance(lua_State* L);
+		static int luaPokemonTypeYellSpeedTicks(lua_State* L);
+		static int luaPokemonTypeChangeTargetChance(lua_State* L);
+		static int luaPokemonTypeChangeTargetSpeed(lua_State* L);
 
 		// Loot
 		static int luaCreateLoot(lua_State* L);
@@ -1376,30 +1376,30 @@ class LuaScriptInterface
 		static int luaLootSetDescription(lua_State* L);
 		static int luaLootAddChildLoot(lua_State* L);
 
-		// MonsterSpell
-		static int luaCreateMonsterSpell(lua_State* L);
-		static int luaDeleteMonsterSpell(lua_State* L);
-		static int luaMonsterSpellSetType(lua_State* L);
-		static int luaMonsterSpellSetScriptName(lua_State* L);
-		static int luaMonsterSpellSetChance(lua_State* L);
-		static int luaMonsterSpellSetInterval(lua_State* L);
-		static int luaMonsterSpellSetRange(lua_State* L);
-		static int luaMonsterSpellSetCombatValue(lua_State* L);
-		static int luaMonsterSpellSetCombatType(lua_State* L);
-		static int luaMonsterSpellSetAttackValue(lua_State* L);
-		static int luaMonsterSpellSetNeedTarget(lua_State* L);
-		static int luaMonsterSpellSetNeedDirection(lua_State* L);
-		static int luaMonsterSpellSetCombatLength(lua_State* L);
-		static int luaMonsterSpellSetCombatSpread(lua_State* L);
-		static int luaMonsterSpellSetCombatRadius(lua_State* L);
-		static int luaMonsterSpellSetConditionType(lua_State* L);
-		static int luaMonsterSpellSetConditionDamage(lua_State* L);
-		static int luaMonsterSpellSetConditionSpeedChange(lua_State* L);
-		static int luaMonsterSpellSetConditionDuration(lua_State* L);
-		static int luaMonsterSpellSetConditionDrunkenness(lua_State* L);
-		static int luaMonsterSpellSetConditionTickInterval(lua_State* L);
-		static int luaMonsterSpellSetCombatShootEffect(lua_State* L);
-		static int luaMonsterSpellSetCombatEffect(lua_State* L);
+		// PokemonSpell
+		static int luaCreatePokemonSpell(lua_State* L);
+		static int luaDeletePokemonSpell(lua_State* L);
+		static int luaPokemonSpellSetType(lua_State* L);
+		static int luaPokemonSpellSetScriptName(lua_State* L);
+		static int luaPokemonSpellSetChance(lua_State* L);
+		static int luaPokemonSpellSetInterval(lua_State* L);
+		static int luaPokemonSpellSetRange(lua_State* L);
+		static int luaPokemonSpellSetCombatValue(lua_State* L);
+		static int luaPokemonSpellSetCombatType(lua_State* L);
+		static int luaPokemonSpellSetAttackValue(lua_State* L);
+		static int luaPokemonSpellSetNeedTarget(lua_State* L);
+		static int luaPokemonSpellSetNeedDirection(lua_State* L);
+		static int luaPokemonSpellSetCombatLength(lua_State* L);
+		static int luaPokemonSpellSetCombatSpread(lua_State* L);
+		static int luaPokemonSpellSetCombatRadius(lua_State* L);
+		static int luaPokemonSpellSetConditionType(lua_State* L);
+		static int luaPokemonSpellSetConditionDamage(lua_State* L);
+		static int luaPokemonSpellSetConditionSpeedChange(lua_State* L);
+		static int luaPokemonSpellSetConditionDuration(lua_State* L);
+		static int luaPokemonSpellSetConditionDrunkenness(lua_State* L);
+		static int luaPokemonSpellSetConditionTickInterval(lua_State* L);
+		static int luaPokemonSpellSetCombatShootEffect(lua_State* L);
+		static int luaPokemonSpellSetCombatEffect(lua_State* L);
 
 		// Party
 		static int luaPartyCreate(lua_State* L);

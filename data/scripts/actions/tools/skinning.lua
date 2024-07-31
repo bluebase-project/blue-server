@@ -142,7 +142,7 @@ function skinning.onUse(player, item, fromPosition, target, toPosition, isHotkey
 
 		if not added and target.itemid == 11343 then
 			effect = CONST_ME_HITAREA
-			player:say("Your attempt at shaping that marble rock failed miserably.", TALKTYPE_MONSTER_SAY)
+			player:say("Your attempt at shaping that marble rock failed miserably.", TALKTYPE_POKEMON_SAY)
 			transform = false
 			target:remove()
 		end
@@ -164,7 +164,7 @@ function skinning.onUse(player, item, fromPosition, target, toPosition, isHotkey
 		end
 	else
 		if table.contains({7441, 7442, 7444, 7445}, target.itemid) then
-			player:say("The attempt of sculpting failed miserably.", TALKTYPE_MONSTER_SAY)
+			player:say("The attempt of sculpting failed miserably.", TALKTYPE_POKEMON_SAY)
 			effect = CONST_ME_HITAREA
 			target:remove()
 		else
@@ -183,7 +183,7 @@ function skinning.onUse(player, item, fromPosition, target, toPosition, isHotkey
 		end
 
 		player:setStorageValue(PlayerStorageKeys.mutatedPumpkin, os.time() + 4 * 60 * 60)
-		player:say("Happy Halloween!", TALKTYPE_MONSTER_SAY)
+		player:say("Happy Halloween!", TALKTYPE_POKEMON_SAY)
 		player:getPosition():sendMagicEffect(CONST_ME_GIFT_WRAPS)
 		player:addAchievement("Mutated Presents")
 		local reward = math.random(1, #skin)

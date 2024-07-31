@@ -115,7 +115,7 @@ enum ChannelEvent_t : uint8_t {
 
 enum CreatureType_t : uint8_t {
 	CREATURETYPE_PLAYER = 0,
-	CREATURETYPE_MONSTER = 1,
+	CREATURETYPE_POKEMON = 1,
 	CREATURETYPE_NPC = 2,
 	CREATURETYPE_SUMMON_OWN = 3,
 	CREATURETYPE_SUMMON_OTHERS = 4,
@@ -593,13 +593,13 @@ using MarketOfferList = std::list<MarketOffer>;
 using HistoryMarketOfferList = std::list<HistoryMarketOffer>;
 using ShopInfoList = std::list<ShopInfo>;
 
-enum MonstersEvent_t : uint8_t {
-	MONSTERS_EVENT_NONE = 0,
-	MONSTERS_EVENT_THINK = 1,
-	MONSTERS_EVENT_APPEAR = 2,
-	MONSTERS_EVENT_DISAPPEAR = 3,
-	MONSTERS_EVENT_MOVE = 4,
-	MONSTERS_EVENT_SAY = 5,
+enum PokemonsEvent_t : uint8_t {
+	POKEMONS_EVENT_NONE = 0,
+	POKEMONS_EVENT_THINK = 1,
+	POKEMONS_EVENT_APPEAR = 2,
+	POKEMONS_EVENT_DISAPPEAR = 3,
+	POKEMONS_EVENT_MOVE = 4,
+	POKEMONS_EVENT_SAY = 5,
 };
 
 #endif

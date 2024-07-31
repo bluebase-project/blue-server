@@ -174,8 +174,8 @@ enum SpeakClasses : uint8_t {
 	TALKTYPE_CHANNEL_R1 = 14, //red - #c text
 	TALKTYPE_PRIVATE_RED_FROM = 15, //@name@text
 	TALKTYPE_PRIVATE_RED_TO = 16, //@name@text
-	TALKTYPE_MONSTER_SAY = 36,
-	TALKTYPE_MONSTER_YELL = 37,
+	TALKTYPE_POKEMON_SAY = 36,
+	TALKTYPE_POKEMON_YELL = 37,
 };
 
 enum MessageClasses : uint8_t {
@@ -494,13 +494,13 @@ enum item_t : uint16_t {
 enum PlayerFlags : uint64_t {
 	PlayerFlag_CannotUseCombat = 1 << 0,
 	PlayerFlag_CannotAttackPlayer = 1 << 1,
-	PlayerFlag_CannotAttackMonster = 1 << 2,
+	PlayerFlag_CannotAttackPokemon = 1 << 2,
 	PlayerFlag_CannotBeAttacked = 1 << 3,
 	PlayerFlag_CanConvinceAll = 1 << 4,
 	PlayerFlag_CanSummonAll = 1 << 5,
 	PlayerFlag_CanIllusionAll = 1 << 6,
 	PlayerFlag_CanSenseInvisibility = 1 << 7,
-	PlayerFlag_IgnoredByMonsters = 1 << 8,
+	PlayerFlag_IgnoredByPokemons = 1 << 8,
 	PlayerFlag_NotGainInFight = 1 << 9,
 	PlayerFlag_HasInfiniteMana = 1 << 10,
 	PlayerFlag_HasInfiniteSoul = 1 << 11,
@@ -542,7 +542,7 @@ enum ReloadTypes_t : uint8_t  {
 	RELOAD_TYPE_GLOBAL,
 	RELOAD_TYPE_GLOBALEVENTS,
 	RELOAD_TYPE_ITEMS,
-	RELOAD_TYPE_MONSTERS,
+	RELOAD_TYPE_POKEMONS,
 	RELOAD_TYPE_MOUNTS,
 	RELOAD_TYPE_MOVEMENTS,
 	RELOAD_TYPE_NPCS,

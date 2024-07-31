@@ -11,7 +11,7 @@
 #include "events.h"
 #include "game.h"
 #include "iologindata.h"
-#include "monster.h"
+#include "pokemon.h"
 #include "movement.h"
 #include "scheduler.h"
 #include "weapons.h"
@@ -3533,8 +3533,8 @@ void Player::onAttackedCreatureDrainHealth(Creature* target, int32_t points)
 
 	if (target) {
 		if (party && !Combat::isPlayerCombat(target)) {
-			Monster* tmpMonster = target->getMonster();
-			if (tmpMonster && tmpMonster->isHostile()) {
+			Pokemon* tmpPokemon = target->getPokemon();
+			if (tmpPokemon && tmpPokemon->isHostile()) {
 				//We have fulfilled a requirement for shared experience
 				party->updatePlayerTicks(this, points);
 			}

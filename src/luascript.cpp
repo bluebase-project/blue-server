@@ -18,7 +18,7 @@
 #include "teleport.h"
 #include "databasemanager.h"
 #include "bed.h"
-#include "monster.h"
+#include "pokemon.h"
 #include "scheduler.h"
 #include "databasetasks.h"
 #include "events.h"
@@ -29,7 +29,7 @@
 
 extern Chat* g_chat;
 extern Game g_game;
-extern Monsters g_monsters;
+extern Pokemons g_pokemons;
 extern ConfigManager g_config;
 extern Vocations g_vocations;
 extern Spells* g_spells;
@@ -706,8 +706,8 @@ void LuaScriptInterface::setCreatureMetatable(lua_State* L, int32_t index, const
 {
 	if (creature->getPlayer()) {
 		luaL_getmetatable(L, "Player");
-	} else if (creature->getMonster()) {
-		luaL_getmetatable(L, "Monster");
+	} else if (creature->getPokemon()) {
+		luaL_getmetatable(L, "Pokemon");
 	} else {
 		luaL_getmetatable(L, "Npc");
 	}
@@ -840,8 +840,8 @@ Thing* LuaScriptInterface::getThing(lua_State* L, int32_t arg)
 			case LuaData_Player:
 				thing = getUserdata<Player>(L, arg);
 				break;
-			case LuaData_Monster:
-				thing = getUserdata<Monster>(L, arg);
+			case LuaData_Pokemon:
+				thing = getUserdata<Pokemon>(L, arg);
 				break;
 			case LuaData_Npc:
 				thing = getUserdata<Npc>(L, arg);
@@ -1462,7 +1462,7 @@ void LuaScriptInterface::registerFunctions()
 	registerEnum(MESSAGE_LOOT)
 
 	registerEnum(CREATURETYPE_PLAYER)
-	registerEnum(CREATURETYPE_MONSTER)
+	registerEnum(CREATURETYPE_POKEMON)
 	registerEnum(CREATURETYPE_NPC)
 	registerEnum(CREATURETYPE_SUMMON_OWN)
 	registerEnum(CREATURETYPE_SUMMON_OTHERS)
@@ -1570,13 +1570,13 @@ void LuaScriptInterface::registerFunctions()
 
 	registerEnum(PlayerFlag_CannotUseCombat)
 	registerEnum(PlayerFlag_CannotAttackPlayer)
-	registerEnum(PlayerFlag_CannotAttackMonster)
+	registerEnum(PlayerFlag_CannotAttackPokemon)
 	registerEnum(PlayerFlag_CannotBeAttacked)
 	registerEnum(PlayerFlag_CanConvinceAll)
 	registerEnum(PlayerFlag_CanSummonAll)
 	registerEnum(PlayerFlag_CanIllusionAll)
 	registerEnum(PlayerFlag_CanSenseInvisibility)
-	registerEnum(PlayerFlag_IgnoredByMonsters)
+	registerEnum(PlayerFlag_IgnoredByPokemons)
 	registerEnum(PlayerFlag_NotGainInFight)
 	registerEnum(PlayerFlag_HasInfiniteMana)
 	registerEnum(PlayerFlag_HasInfiniteSoul)
@@ -1675,8 +1675,8 @@ void LuaScriptInterface::registerFunctions()
 	registerEnum(TALKTYPE_CHANNEL_R1)
 	registerEnum(TALKTYPE_PRIVATE_RED_FROM)
 	registerEnum(TALKTYPE_PRIVATE_RED_TO)
-	registerEnum(TALKTYPE_MONSTER_SAY)
-	registerEnum(TALKTYPE_MONSTER_YELL)
+	registerEnum(TALKTYPE_POKEMON_SAY)
+	registerEnum(TALKTYPE_POKEMON_YELL)
 
 	registerEnum(TEXTCOLOR_BLUE)
 	registerEnum(TEXTCOLOR_LIGHTGREEN)
@@ -1881,7 +1881,7 @@ void LuaScriptInterface::registerFunctions()
 	registerEnum(RELOAD_TYPE_GLOBAL)
 	registerEnum(RELOAD_TYPE_GLOBALEVENTS)
 	registerEnum(RELOAD_TYPE_ITEMS)
-	registerEnum(RELOAD_TYPE_MONSTERS)
+	registerEnum(RELOAD_TYPE_POKEMONS)
 	registerEnum(RELOAD_TYPE_MOUNTS)
 	registerEnum(RELOAD_TYPE_MOVEMENTS)
 	registerEnum(RELOAD_TYPE_NPCS)
@@ -1903,11 +1903,11 @@ void LuaScriptInterface::registerFunctions()
 	registerEnum(SPELL_INSTANT)
 	registerEnum(SPELL_RUNE)
 
-	registerEnum(MONSTERS_EVENT_THINK)
-	registerEnum(MONSTERS_EVENT_APPEAR)
-	registerEnum(MONSTERS_EVENT_DISAPPEAR)
-	registerEnum(MONSTERS_EVENT_MOVE)
-	registerEnum(MONSTERS_EVENT_SAY)
+	registerEnum(POKEMONS_EVENT_THINK)
+	registerEnum(POKEMONS_EVENT_APPEAR)
+	registerEnum(POKEMONS_EVENT_DISAPPEAR)
+	registerEnum(POKEMONS_EVENT_MOVE)
+	registerEnum(POKEMONS_EVENT_SAY)
 
 	// _G
 	registerGlobalVariable("INDEX_WHEREEVER", INDEX_WHEREEVER);
@@ -2016,10 +2016,10 @@ void LuaScriptInterface::registerFunctions()
 
 	registerMethod("Game", "getExperienceStage", LuaScriptInterface::luaGameGetExperienceStage);
 	registerMethod("Game", "getExperienceForLevel", LuaScriptInterface::luaGameGetExperienceForLevel);
-	registerMethod("Game", "getMonsterCount", LuaScriptInterface::luaGameGetMonsterCount);
+	registerMethod("Game", "getPokemonCount", LuaScriptInterface::luaGameGetPokemonCount);
 	registerMethod("Game", "getPlayerCount", LuaScriptInterface::luaGameGetPlayerCount);
 	registerMethod("Game", "getNpcCount", LuaScriptInterface::luaGameGetNpcCount);
-	registerMethod("Game", "getMonsterTypes", LuaScriptInterface::luaGameGetMonsterTypes);
+	registerMethod("Game", "getPokemonTypes", LuaScriptInterface::luaGameGetPokemonTypes);
 
 	registerMethod("Game", "getTowns", LuaScriptInterface::luaGameGetTowns);
 	registerMethod("Game", "getHouses", LuaScriptInterface::luaGameGetHouses);
@@ -2035,10 +2035,10 @@ void LuaScriptInterface::registerFunctions()
 
 	registerMethod("Game", "createItem", LuaScriptInterface::luaGameCreateItem);
 	registerMethod("Game", "createContainer", LuaScriptInterface::luaGameCreateContainer);
-	registerMethod("Game", "createMonster", LuaScriptInterface::luaGameCreateMonster);
+	registerMethod("Game", "createPokemon", LuaScriptInterface::luaGameCreatePokemon);
 	registerMethod("Game", "createNpc", LuaScriptInterface::luaGameCreateNpc);
 	registerMethod("Game", "createTile", LuaScriptInterface::luaGameCreateTile);
-	registerMethod("Game", "createMonsterType", LuaScriptInterface::luaGameCreateMonsterType);
+	registerMethod("Game", "createPokemonType", LuaScriptInterface::luaGameCreatePokemonType);
 
 	registerMethod("Game", "startRaid", LuaScriptInterface::luaGameStartRaid);
 
@@ -2509,41 +2509,41 @@ void LuaScriptInterface::registerFunctions()
 
 	registerMethod("Player", "getStoreInbox", LuaScriptInterface::luaPlayerGetStoreInbox);
 
-	// Monster
-	registerClass("Monster", "Creature", LuaScriptInterface::luaMonsterCreate);
-	registerMetaMethod("Monster", "__eq", LuaScriptInterface::luaUserdataCompare);
+	// Pokemon
+	registerClass("Pokemon", "Creature", LuaScriptInterface::luaPokemonCreate);
+	registerMetaMethod("Pokemon", "__eq", LuaScriptInterface::luaUserdataCompare);
 
-	registerMethod("Monster", "isMonster", LuaScriptInterface::luaMonsterIsMonster);
+	registerMethod("Pokemon", "isPokemon", LuaScriptInterface::luaPokemonIsPokemon);
 
-	registerMethod("Monster", "getType", LuaScriptInterface::luaMonsterGetType);
+	registerMethod("Pokemon", "getType", LuaScriptInterface::luaPokemonGetType);
 
-	registerMethod("Monster", "rename", LuaScriptInterface::luaMonsterRename);
+	registerMethod("Pokemon", "rename", LuaScriptInterface::luaPokemonRename);
 
-	registerMethod("Monster", "getSpawnPosition", LuaScriptInterface::luaMonsterGetSpawnPosition);
-	registerMethod("Monster", "isInSpawnRange", LuaScriptInterface::luaMonsterIsInSpawnRange);
+	registerMethod("Pokemon", "getSpawnPosition", LuaScriptInterface::luaPokemonGetSpawnPosition);
+	registerMethod("Pokemon", "isInSpawnRange", LuaScriptInterface::luaPokemonIsInSpawnRange);
 
-	registerMethod("Monster", "isIdle", LuaScriptInterface::luaMonsterIsIdle);
-	registerMethod("Monster", "setIdle", LuaScriptInterface::luaMonsterSetIdle);
+	registerMethod("Pokemon", "isIdle", LuaScriptInterface::luaPokemonIsIdle);
+	registerMethod("Pokemon", "setIdle", LuaScriptInterface::luaPokemonSetIdle);
 
-	registerMethod("Monster", "isTarget", LuaScriptInterface::luaMonsterIsTarget);
-	registerMethod("Monster", "isOpponent", LuaScriptInterface::luaMonsterIsOpponent);
-	registerMethod("Monster", "isFriend", LuaScriptInterface::luaMonsterIsFriend);
+	registerMethod("Pokemon", "isTarget", LuaScriptInterface::luaPokemonIsTarget);
+	registerMethod("Pokemon", "isOpponent", LuaScriptInterface::luaPokemonIsOpponent);
+	registerMethod("Pokemon", "isFriend", LuaScriptInterface::luaPokemonIsFriend);
 
-	registerMethod("Monster", "addFriend", LuaScriptInterface::luaMonsterAddFriend);
-	registerMethod("Monster", "removeFriend", LuaScriptInterface::luaMonsterRemoveFriend);
-	registerMethod("Monster", "getFriendList", LuaScriptInterface::luaMonsterGetFriendList);
-	registerMethod("Monster", "getFriendCount", LuaScriptInterface::luaMonsterGetFriendCount);
+	registerMethod("Pokemon", "addFriend", LuaScriptInterface::luaPokemonAddFriend);
+	registerMethod("Pokemon", "removeFriend", LuaScriptInterface::luaPokemonRemoveFriend);
+	registerMethod("Pokemon", "getFriendList", LuaScriptInterface::luaPokemonGetFriendList);
+	registerMethod("Pokemon", "getFriendCount", LuaScriptInterface::luaPokemonGetFriendCount);
 
-	registerMethod("Monster", "addTarget", LuaScriptInterface::luaMonsterAddTarget);
-	registerMethod("Monster", "removeTarget", LuaScriptInterface::luaMonsterRemoveTarget);
-	registerMethod("Monster", "getTargetList", LuaScriptInterface::luaMonsterGetTargetList);
-	registerMethod("Monster", "getTargetCount", LuaScriptInterface::luaMonsterGetTargetCount);
+	registerMethod("Pokemon", "addTarget", LuaScriptInterface::luaPokemonAddTarget);
+	registerMethod("Pokemon", "removeTarget", LuaScriptInterface::luaPokemonRemoveTarget);
+	registerMethod("Pokemon", "getTargetList", LuaScriptInterface::luaPokemonGetTargetList);
+	registerMethod("Pokemon", "getTargetCount", LuaScriptInterface::luaPokemonGetTargetCount);
 
-	registerMethod("Monster", "selectTarget", LuaScriptInterface::luaMonsterSelectTarget);
-	registerMethod("Monster", "searchTarget", LuaScriptInterface::luaMonsterSearchTarget);
+	registerMethod("Pokemon", "selectTarget", LuaScriptInterface::luaPokemonSelectTarget);
+	registerMethod("Pokemon", "searchTarget", LuaScriptInterface::luaPokemonSearchTarget);
 
-	registerMethod("Monster", "isWalkingToSpawn", LuaScriptInterface::luaMonsterIsWalkingToSpawn);
-	registerMethod("Monster", "walkToSpawn", LuaScriptInterface::luaMonsterWalkToSpawn);
+	registerMethod("Pokemon", "isWalkingToSpawn", LuaScriptInterface::luaPokemonIsWalkingToSpawn);
+	registerMethod("Pokemon", "walkToSpawn", LuaScriptInterface::luaPokemonWalkToSpawn);
 
 	// Npc
 	registerClass("Npc", "Creature", LuaScriptInterface::luaNpcCreate);
@@ -2777,85 +2777,85 @@ void LuaScriptInterface::registerFunctions()
 	registerClass("Outfit", "", LuaScriptInterface::luaOutfitCreate);
 	registerMetaMethod("Outfit", "__eq", LuaScriptInterface::luaOutfitCompare);
 
-	// MonsterType
-	registerClass("MonsterType", "", LuaScriptInterface::luaMonsterTypeCreate);
-	registerMetaMethod("MonsterType", "__eq", LuaScriptInterface::luaUserdataCompare);
+	// PokemonType
+	registerClass("PokemonType", "", LuaScriptInterface::luaPokemonTypeCreate);
+	registerMetaMethod("PokemonType", "__eq", LuaScriptInterface::luaUserdataCompare);
 
-	registerMethod("MonsterType", "isAttackable", LuaScriptInterface::luaMonsterTypeIsAttackable);
-	registerMethod("MonsterType", "isChallengeable", LuaScriptInterface::luaMonsterTypeIsChallengeable);
-	registerMethod("MonsterType", "isConvinceable", LuaScriptInterface::luaMonsterTypeIsConvinceable);
-	registerMethod("MonsterType", "isSummonable", LuaScriptInterface::luaMonsterTypeIsSummonable);
-	registerMethod("MonsterType", "isIgnoringSpawnBlock", LuaScriptInterface::luaMonsterTypeIsIgnoringSpawnBlock);
-	registerMethod("MonsterType", "isIllusionable", LuaScriptInterface::luaMonsterTypeIsIllusionable);
-	registerMethod("MonsterType", "isHostile", LuaScriptInterface::luaMonsterTypeIsHostile);
-	registerMethod("MonsterType", "isPushable", LuaScriptInterface::luaMonsterTypeIsPushable);
-	registerMethod("MonsterType", "isHealthHidden", LuaScriptInterface::luaMonsterTypeIsHealthHidden);
-	registerMethod("MonsterType", "isBoss", LuaScriptInterface::luaMonsterTypeIsBoss);
+	registerMethod("PokemonType", "isAttackable", LuaScriptInterface::luaPokemonTypeIsAttackable);
+	registerMethod("PokemonType", "isChallengeable", LuaScriptInterface::luaPokemonTypeIsChallengeable);
+	registerMethod("PokemonType", "isConvinceable", LuaScriptInterface::luaPokemonTypeIsConvinceable);
+	registerMethod("PokemonType", "isSummonable", LuaScriptInterface::luaPokemonTypeIsSummonable);
+	registerMethod("PokemonType", "isIgnoringSpawnBlock", LuaScriptInterface::luaPokemonTypeIsIgnoringSpawnBlock);
+	registerMethod("PokemonType", "isIllusionable", LuaScriptInterface::luaPokemonTypeIsIllusionable);
+	registerMethod("PokemonType", "isHostile", LuaScriptInterface::luaPokemonTypeIsHostile);
+	registerMethod("PokemonType", "isPushable", LuaScriptInterface::luaPokemonTypeIsPushable);
+	registerMethod("PokemonType", "isHealthHidden", LuaScriptInterface::luaPokemonTypeIsHealthHidden);
+	registerMethod("PokemonType", "isBoss", LuaScriptInterface::luaPokemonTypeIsBoss);
 
-	registerMethod("MonsterType", "canPushItems", LuaScriptInterface::luaMonsterTypeCanPushItems);
-	registerMethod("MonsterType", "canPushCreatures", LuaScriptInterface::luaMonsterTypeCanPushCreatures);
+	registerMethod("PokemonType", "canPushItems", LuaScriptInterface::luaPokemonTypeCanPushItems);
+	registerMethod("PokemonType", "canPushCreatures", LuaScriptInterface::luaPokemonTypeCanPushCreatures);
 
-	registerMethod("MonsterType", "canWalkOnEnergy", LuaScriptInterface::luaMonsterTypeCanWalkOnEnergy);
-	registerMethod("MonsterType", "canWalkOnFire", LuaScriptInterface::luaMonsterTypeCanWalkOnFire);
-	registerMethod("MonsterType", "canWalkOnPoison", LuaScriptInterface::luaMonsterTypeCanWalkOnPoison);
+	registerMethod("PokemonType", "canWalkOnEnergy", LuaScriptInterface::luaPokemonTypeCanWalkOnEnergy);
+	registerMethod("PokemonType", "canWalkOnFire", LuaScriptInterface::luaPokemonTypeCanWalkOnFire);
+	registerMethod("PokemonType", "canWalkOnPoison", LuaScriptInterface::luaPokemonTypeCanWalkOnPoison);
 
-	registerMethod("MonsterType", "name", LuaScriptInterface::luaMonsterTypeName);
-	registerMethod("MonsterType", "nameDescription", LuaScriptInterface::luaMonsterTypeNameDescription);
+	registerMethod("PokemonType", "name", LuaScriptInterface::luaPokemonTypeName);
+	registerMethod("PokemonType", "nameDescription", LuaScriptInterface::luaPokemonTypeNameDescription);
 
-	registerMethod("MonsterType", "health", LuaScriptInterface::luaMonsterTypeHealth);
-	registerMethod("MonsterType", "maxHealth", LuaScriptInterface::luaMonsterTypeMaxHealth);
-	registerMethod("MonsterType", "runHealth", LuaScriptInterface::luaMonsterTypeRunHealth);
-	registerMethod("MonsterType", "experience", LuaScriptInterface::luaMonsterTypeExperience);
-	registerMethod("MonsterType", "skull", LuaScriptInterface::luaMonsterTypeSkull);
+	registerMethod("PokemonType", "health", LuaScriptInterface::luaPokemonTypeHealth);
+	registerMethod("PokemonType", "maxHealth", LuaScriptInterface::luaPokemonTypeMaxHealth);
+	registerMethod("PokemonType", "runHealth", LuaScriptInterface::luaPokemonTypeRunHealth);
+	registerMethod("PokemonType", "experience", LuaScriptInterface::luaPokemonTypeExperience);
+	registerMethod("PokemonType", "skull", LuaScriptInterface::luaPokemonTypeSkull);
 
-	registerMethod("MonsterType", "combatImmunities", LuaScriptInterface::luaMonsterTypeCombatImmunities);
-	registerMethod("MonsterType", "conditionImmunities", LuaScriptInterface::luaMonsterTypeConditionImmunities);
+	registerMethod("PokemonType", "combatImmunities", LuaScriptInterface::luaPokemonTypeCombatImmunities);
+	registerMethod("PokemonType", "conditionImmunities", LuaScriptInterface::luaPokemonTypeConditionImmunities);
 
-	registerMethod("MonsterType", "getAttackList", LuaScriptInterface::luaMonsterTypeGetAttackList);
-	registerMethod("MonsterType", "addAttack", LuaScriptInterface::luaMonsterTypeAddAttack);
+	registerMethod("PokemonType", "getAttackList", LuaScriptInterface::luaPokemonTypeGetAttackList);
+	registerMethod("PokemonType", "addAttack", LuaScriptInterface::luaPokemonTypeAddAttack);
 
-	registerMethod("MonsterType", "getDefenseList", LuaScriptInterface::luaMonsterTypeGetDefenseList);
-	registerMethod("MonsterType", "addDefense", LuaScriptInterface::luaMonsterTypeAddDefense);
+	registerMethod("PokemonType", "getDefenseList", LuaScriptInterface::luaPokemonTypeGetDefenseList);
+	registerMethod("PokemonType", "addDefense", LuaScriptInterface::luaPokemonTypeAddDefense);
 
-	registerMethod("MonsterType", "getElementList", LuaScriptInterface::luaMonsterTypeGetElementList);
-	registerMethod("MonsterType", "addElement", LuaScriptInterface::luaMonsterTypeAddElement);
+	registerMethod("PokemonType", "getElementList", LuaScriptInterface::luaPokemonTypeGetElementList);
+	registerMethod("PokemonType", "addElement", LuaScriptInterface::luaPokemonTypeAddElement);
 
-	registerMethod("MonsterType", "getVoices", LuaScriptInterface::luaMonsterTypeGetVoices);
-	registerMethod("MonsterType", "addVoice", LuaScriptInterface::luaMonsterTypeAddVoice);
+	registerMethod("PokemonType", "getVoices", LuaScriptInterface::luaPokemonTypeGetVoices);
+	registerMethod("PokemonType", "addVoice", LuaScriptInterface::luaPokemonTypeAddVoice);
 
-	registerMethod("MonsterType", "getLoot", LuaScriptInterface::luaMonsterTypeGetLoot);
-	registerMethod("MonsterType", "addLoot", LuaScriptInterface::luaMonsterTypeAddLoot);
+	registerMethod("PokemonType", "getLoot", LuaScriptInterface::luaPokemonTypeGetLoot);
+	registerMethod("PokemonType", "addLoot", LuaScriptInterface::luaPokemonTypeAddLoot);
 
-	registerMethod("MonsterType", "getCreatureEvents", LuaScriptInterface::luaMonsterTypeGetCreatureEvents);
-	registerMethod("MonsterType", "registerEvent", LuaScriptInterface::luaMonsterTypeRegisterEvent);
+	registerMethod("PokemonType", "getCreatureEvents", LuaScriptInterface::luaPokemonTypeGetCreatureEvents);
+	registerMethod("PokemonType", "registerEvent", LuaScriptInterface::luaPokemonTypeRegisterEvent);
 
-	registerMethod("MonsterType", "eventType", LuaScriptInterface::luaMonsterTypeEventType);
-	registerMethod("MonsterType", "onThink", LuaScriptInterface::luaMonsterTypeEventOnCallback);
-	registerMethod("MonsterType", "onAppear", LuaScriptInterface::luaMonsterTypeEventOnCallback);
-	registerMethod("MonsterType", "onDisappear", LuaScriptInterface::luaMonsterTypeEventOnCallback);
-	registerMethod("MonsterType", "onMove", LuaScriptInterface::luaMonsterTypeEventOnCallback);
-	registerMethod("MonsterType", "onSay", LuaScriptInterface::luaMonsterTypeEventOnCallback);
+	registerMethod("PokemonType", "eventType", LuaScriptInterface::luaPokemonTypeEventType);
+	registerMethod("PokemonType", "onThink", LuaScriptInterface::luaPokemonTypeEventOnCallback);
+	registerMethod("PokemonType", "onAppear", LuaScriptInterface::luaPokemonTypeEventOnCallback);
+	registerMethod("PokemonType", "onDisappear", LuaScriptInterface::luaPokemonTypeEventOnCallback);
+	registerMethod("PokemonType", "onMove", LuaScriptInterface::luaPokemonTypeEventOnCallback);
+	registerMethod("PokemonType", "onSay", LuaScriptInterface::luaPokemonTypeEventOnCallback);
 
-	registerMethod("MonsterType", "getSummonList", LuaScriptInterface::luaMonsterTypeGetSummonList);
-	registerMethod("MonsterType", "addSummon", LuaScriptInterface::luaMonsterTypeAddSummon);
+	registerMethod("PokemonType", "getSummonList", LuaScriptInterface::luaPokemonTypeGetSummonList);
+	registerMethod("PokemonType", "addSummon", LuaScriptInterface::luaPokemonTypeAddSummon);
 
-	registerMethod("MonsterType", "maxSummons", LuaScriptInterface::luaMonsterTypeMaxSummons);
+	registerMethod("PokemonType", "maxSummons", LuaScriptInterface::luaPokemonTypeMaxSummons);
 
-	registerMethod("MonsterType", "armor", LuaScriptInterface::luaMonsterTypeArmor);
-	registerMethod("MonsterType", "defense", LuaScriptInterface::luaMonsterTypeDefense);
-	registerMethod("MonsterType", "outfit", LuaScriptInterface::luaMonsterTypeOutfit);
-	registerMethod("MonsterType", "race", LuaScriptInterface::luaMonsterTypeRace);
-	registerMethod("MonsterType", "corpseId", LuaScriptInterface::luaMonsterTypeCorpseId);
-	registerMethod("MonsterType", "manaCost", LuaScriptInterface::luaMonsterTypeManaCost);
-	registerMethod("MonsterType", "baseSpeed", LuaScriptInterface::luaMonsterTypeBaseSpeed);
-	registerMethod("MonsterType", "light", LuaScriptInterface::luaMonsterTypeLight);
+	registerMethod("PokemonType", "armor", LuaScriptInterface::luaPokemonTypeArmor);
+	registerMethod("PokemonType", "defense", LuaScriptInterface::luaPokemonTypeDefense);
+	registerMethod("PokemonType", "outfit", LuaScriptInterface::luaPokemonTypeOutfit);
+	registerMethod("PokemonType", "race", LuaScriptInterface::luaPokemonTypeRace);
+	registerMethod("PokemonType", "corpseId", LuaScriptInterface::luaPokemonTypeCorpseId);
+	registerMethod("PokemonType", "manaCost", LuaScriptInterface::luaPokemonTypeManaCost);
+	registerMethod("PokemonType", "baseSpeed", LuaScriptInterface::luaPokemonTypeBaseSpeed);
+	registerMethod("PokemonType", "light", LuaScriptInterface::luaPokemonTypeLight);
 
-	registerMethod("MonsterType", "staticAttackChance", LuaScriptInterface::luaMonsterTypeStaticAttackChance);
-	registerMethod("MonsterType", "targetDistance", LuaScriptInterface::luaMonsterTypeTargetDistance);
-	registerMethod("MonsterType", "yellChance", LuaScriptInterface::luaMonsterTypeYellChance);
-	registerMethod("MonsterType", "yellSpeedTicks", LuaScriptInterface::luaMonsterTypeYellSpeedTicks);
-	registerMethod("MonsterType", "changeTargetChance", LuaScriptInterface::luaMonsterTypeChangeTargetChance);
-	registerMethod("MonsterType", "changeTargetSpeed", LuaScriptInterface::luaMonsterTypeChangeTargetSpeed);
+	registerMethod("PokemonType", "staticAttackChance", LuaScriptInterface::luaPokemonTypeStaticAttackChance);
+	registerMethod("PokemonType", "targetDistance", LuaScriptInterface::luaPokemonTypeTargetDistance);
+	registerMethod("PokemonType", "yellChance", LuaScriptInterface::luaPokemonTypeYellChance);
+	registerMethod("PokemonType", "yellSpeedTicks", LuaScriptInterface::luaPokemonTypeYellSpeedTicks);
+	registerMethod("PokemonType", "changeTargetChance", LuaScriptInterface::luaPokemonTypeChangeTargetChance);
+	registerMethod("PokemonType", "changeTargetSpeed", LuaScriptInterface::luaPokemonTypeChangeTargetSpeed);
 
 	// Loot
 	registerClass("Loot", "", LuaScriptInterface::luaCreateLoot);
@@ -2870,32 +2870,32 @@ void LuaScriptInterface::registerFunctions()
 	registerMethod("Loot", "setDescription", LuaScriptInterface::luaLootSetDescription);
 	registerMethod("Loot", "addChildLoot", LuaScriptInterface::luaLootAddChildLoot);
 
-	// MonsterSpell
-	registerClass("MonsterSpell", "", LuaScriptInterface::luaCreateMonsterSpell);
-	registerMetaMethod("MonsterSpell", "__gc", LuaScriptInterface::luaDeleteMonsterSpell);
-	registerMethod("MonsterSpell", "delete", LuaScriptInterface::luaDeleteMonsterSpell);
+	// PokemonSpell
+	registerClass("PokemonSpell", "", LuaScriptInterface::luaCreatePokemonSpell);
+	registerMetaMethod("PokemonSpell", "__gc", LuaScriptInterface::luaDeletePokemonSpell);
+	registerMethod("PokemonSpell", "delete", LuaScriptInterface::luaDeletePokemonSpell);
 
-	registerMethod("MonsterSpell", "setType", LuaScriptInterface::luaMonsterSpellSetType);
-	registerMethod("MonsterSpell", "setScriptName", LuaScriptInterface::luaMonsterSpellSetScriptName);
-	registerMethod("MonsterSpell", "setChance", LuaScriptInterface::luaMonsterSpellSetChance);
-	registerMethod("MonsterSpell", "setInterval", LuaScriptInterface::luaMonsterSpellSetInterval);
-	registerMethod("MonsterSpell", "setRange", LuaScriptInterface::luaMonsterSpellSetRange);
-	registerMethod("MonsterSpell", "setCombatValue", LuaScriptInterface::luaMonsterSpellSetCombatValue);
-	registerMethod("MonsterSpell", "setCombatType", LuaScriptInterface::luaMonsterSpellSetCombatType);
-	registerMethod("MonsterSpell", "setAttackValue", LuaScriptInterface::luaMonsterSpellSetAttackValue);
-	registerMethod("MonsterSpell", "setNeedTarget", LuaScriptInterface::luaMonsterSpellSetNeedTarget);
-	registerMethod("MonsterSpell", "setNeedDirection", LuaScriptInterface::luaMonsterSpellSetNeedDirection);
-	registerMethod("MonsterSpell", "setCombatLength", LuaScriptInterface::luaMonsterSpellSetCombatLength);
-	registerMethod("MonsterSpell", "setCombatSpread", LuaScriptInterface::luaMonsterSpellSetCombatSpread);
-	registerMethod("MonsterSpell", "setCombatRadius", LuaScriptInterface::luaMonsterSpellSetCombatRadius);
-	registerMethod("MonsterSpell", "setConditionType", LuaScriptInterface::luaMonsterSpellSetConditionType);
-	registerMethod("MonsterSpell", "setConditionDamage", LuaScriptInterface::luaMonsterSpellSetConditionDamage);
-	registerMethod("MonsterSpell", "setConditionSpeedChange", LuaScriptInterface::luaMonsterSpellSetConditionSpeedChange);
-	registerMethod("MonsterSpell", "setConditionDuration", LuaScriptInterface::luaMonsterSpellSetConditionDuration);
-	registerMethod("MonsterSpell", "setConditionDrunkenness", LuaScriptInterface::luaMonsterSpellSetConditionDrunkenness);
-	registerMethod("MonsterSpell", "setConditionTickInterval", LuaScriptInterface::luaMonsterSpellSetConditionTickInterval);
-	registerMethod("MonsterSpell", "setCombatShootEffect", LuaScriptInterface::luaMonsterSpellSetCombatShootEffect);
-	registerMethod("MonsterSpell", "setCombatEffect", LuaScriptInterface::luaMonsterSpellSetCombatEffect);
+	registerMethod("PokemonSpell", "setType", LuaScriptInterface::luaPokemonSpellSetType);
+	registerMethod("PokemonSpell", "setScriptName", LuaScriptInterface::luaPokemonSpellSetScriptName);
+	registerMethod("PokemonSpell", "setChance", LuaScriptInterface::luaPokemonSpellSetChance);
+	registerMethod("PokemonSpell", "setInterval", LuaScriptInterface::luaPokemonSpellSetInterval);
+	registerMethod("PokemonSpell", "setRange", LuaScriptInterface::luaPokemonSpellSetRange);
+	registerMethod("PokemonSpell", "setCombatValue", LuaScriptInterface::luaPokemonSpellSetCombatValue);
+	registerMethod("PokemonSpell", "setCombatType", LuaScriptInterface::luaPokemonSpellSetCombatType);
+	registerMethod("PokemonSpell", "setAttackValue", LuaScriptInterface::luaPokemonSpellSetAttackValue);
+	registerMethod("PokemonSpell", "setNeedTarget", LuaScriptInterface::luaPokemonSpellSetNeedTarget);
+	registerMethod("PokemonSpell", "setNeedDirection", LuaScriptInterface::luaPokemonSpellSetNeedDirection);
+	registerMethod("PokemonSpell", "setCombatLength", LuaScriptInterface::luaPokemonSpellSetCombatLength);
+	registerMethod("PokemonSpell", "setCombatSpread", LuaScriptInterface::luaPokemonSpellSetCombatSpread);
+	registerMethod("PokemonSpell", "setCombatRadius", LuaScriptInterface::luaPokemonSpellSetCombatRadius);
+	registerMethod("PokemonSpell", "setConditionType", LuaScriptInterface::luaPokemonSpellSetConditionType);
+	registerMethod("PokemonSpell", "setConditionDamage", LuaScriptInterface::luaPokemonSpellSetConditionDamage);
+	registerMethod("PokemonSpell", "setConditionSpeedChange", LuaScriptInterface::luaPokemonSpellSetConditionSpeedChange);
+	registerMethod("PokemonSpell", "setConditionDuration", LuaScriptInterface::luaPokemonSpellSetConditionDuration);
+	registerMethod("PokemonSpell", "setConditionDrunkenness", LuaScriptInterface::luaPokemonSpellSetConditionDrunkenness);
+	registerMethod("PokemonSpell", "setConditionTickInterval", LuaScriptInterface::luaPokemonSpellSetConditionTickInterval);
+	registerMethod("PokemonSpell", "setCombatShootEffect", LuaScriptInterface::luaPokemonSpellSetCombatShootEffect);
+	registerMethod("PokemonSpell", "setCombatEffect", LuaScriptInterface::luaPokemonSpellSetCombatEffect);
 
 	// Party
 	registerClass("Party", "", LuaScriptInterface::luaPartyCreate);
@@ -3140,8 +3140,8 @@ void LuaScriptInterface::registerClass(const std::string& className, const std::
 		lua_pushnumber(luaState, LuaData_Teleport);
 	} else if (className == "Player") {
 		lua_pushnumber(luaState, LuaData_Player);
-	} else if (className == "Monster") {
-		lua_pushnumber(luaState, LuaData_Monster);
+	} else if (className == "Pokemon") {
+		lua_pushnumber(luaState, LuaData_Pokemon);
 	} else if (className == "Npc") {
 		lua_pushnumber(luaState, LuaData_Npc);
 	} else if (className == "Tile") {
@@ -3696,7 +3696,7 @@ int LuaScriptInterface::luaAddEvent(lua_State* L)
 							break;
 						}
 						case LuaData_Player:
-						case LuaData_Monster:
+						case LuaData_Pokemon:
 						case LuaData_Npc: {
 							lua_getglobal(L, "Creature");
 							lua_getfield(L, -1, "getId");
@@ -4277,10 +4277,10 @@ int LuaScriptInterface::luaGameGetExperienceForLevel(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaGameGetMonsterCount(lua_State* L)
+int LuaScriptInterface::luaGameGetPokemonCount(lua_State* L)
 {
-	// Game.getMonsterCount()
-	lua_pushnumber(L, g_game.getMonstersOnline());
+	// Game.getPokemonCount()
+	lua_pushnumber(L, g_game.getPokemonsOnline());
 	return 1;
 }
 
@@ -4298,15 +4298,15 @@ int LuaScriptInterface::luaGameGetNpcCount(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaGameGetMonsterTypes(lua_State* L)
+int LuaScriptInterface::luaGameGetPokemonTypes(lua_State* L)
 {
-	// Game.getMonsterTypes()
-	auto& type = g_monsters.monsters;
+	// Game.getPokemonTypes()
+	auto& type = g_pokemons.pokemons;
 	lua_createtable(L, type.size(), 0);
 
 	for (auto& mType : type) {
-		pushUserdata<MonsterType>(L, &mType.second);
-		setMetatable(L, -1, "MonsterType");
+		pushUserdata<PokemonType>(L, &mType.second);
+		setMetatable(L, -1, "PokemonType");
 		lua_setfield(L, -2, mType.first.c_str());
 	}
 	return 1;
@@ -4476,11 +4476,11 @@ int LuaScriptInterface::luaGameCreateContainer(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaGameCreateMonster(lua_State* L)
+int LuaScriptInterface::luaGameCreatePokemon(lua_State* L)
 {
-	// Game.createMonster(monsterName, position[, extended = false[, force = false]])
-	Monster* monster = Monster::createMonster(getString(L, 1));
-	if (!monster) {
+	// Game.createPokemon(pokemonName, position[, extended = false[, force = false]])
+	Pokemon* pokemon = Pokemon::createPokemon(getString(L, 1));
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
@@ -4488,16 +4488,16 @@ int LuaScriptInterface::luaGameCreateMonster(lua_State* L)
 	const Position& position = getPosition(L, 2);
 	bool extended = getBoolean(L, 3, false);
 	bool force = getBoolean(L, 4, false);
-	if (g_events->eventMonsterOnSpawn(monster, position, false, true) || force) {
-		if (g_game.placeCreature(monster, position, extended, force)) {
-			pushUserdata<Monster>(L, monster);
-			setMetatable(L, -1, "Monster");
+	if (g_events->eventPokemonOnSpawn(pokemon, position, false, true) || force) {
+		if (g_game.placeCreature(pokemon, position, extended, force)) {
+			pushUserdata<Pokemon>(L, pokemon);
+			setMetatable(L, -1, "Pokemon");
 		} else {
-			delete monster;
+			delete pokemon;
 			lua_pushnil(L);
 		}
 	} else {
-		delete monster;
+		delete pokemon;
 		lua_pushnil(L);
 	}
 	return 1;
@@ -4557,11 +4557,11 @@ int LuaScriptInterface::luaGameCreateTile(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaGameCreateMonsterType(lua_State* L)
+int LuaScriptInterface::luaGameCreatePokemonType(lua_State* L)
 {
-	// Game.createMonsterType(name)
+	// Game.createPokemonType(name)
 	if (getScriptEnv()->getScriptInterface() != &g_scripts->getScriptInterface()) {
-		reportErrorFunc(L, "MonsterTypes can only be registered in the Scripts interface.");
+		reportErrorFunc(L, "PokemonTypes can only be registered in the Scripts interface.");
 		lua_pushnil(L);
 		return 1;
 	}
@@ -4572,25 +4572,25 @@ int LuaScriptInterface::luaGameCreateMonsterType(lua_State* L)
 		return 1;
 	}
 
-	MonsterType* monsterType = g_monsters.getMonsterType(name, false);
-	if (!monsterType) {
-		monsterType = &g_monsters.monsters[asLowerCaseString(name)];
-		monsterType->name = name;
-		monsterType->nameDescription = "a " + name;
+	PokemonType* pokemonType = g_pokemons.getPokemonType(name, false);
+	if (!pokemonType) {
+		pokemonType = &g_pokemons.pokemons[asLowerCaseString(name)];
+		pokemonType->name = name;
+		pokemonType->nameDescription = "a " + name;
 	} else {
-		monsterType->info.lootItems.clear();
-		monsterType->info.attackSpells.clear();
-		monsterType->info.defenseSpells.clear();
-		monsterType->info.scripts.clear();
-		monsterType->info.thinkEvent = -1;
-		monsterType->info.creatureAppearEvent = -1;
-		monsterType->info.creatureDisappearEvent = -1;
-		monsterType->info.creatureMoveEvent = -1;
-		monsterType->info.creatureSayEvent = -1;
+		pokemonType->info.lootItems.clear();
+		pokemonType->info.attackSpells.clear();
+		pokemonType->info.defenseSpells.clear();
+		pokemonType->info.scripts.clear();
+		pokemonType->info.thinkEvent = -1;
+		pokemonType->info.creatureAppearEvent = -1;
+		pokemonType->info.creatureDisappearEvent = -1;
+		pokemonType->info.creatureMoveEvent = -1;
+		pokemonType->info.creatureSayEvent = -1;
 	}
 
-	pushUserdata<MonsterType>(L, monsterType);
-	setMetatable(L, -1, "MonsterType");
+	pushUserdata<PokemonType>(L, pokemonType);
+	setMetatable(L, -1, "PokemonType");
 	return 1;
 }
 
@@ -7154,7 +7154,7 @@ int LuaScriptInterface::luaCreatureCreate(lua_State* L)
 		creature = g_game.getCreatureByName(getString(L, 2));
 	} else if (isUserdata(L, 2)) {
 		LuaDataType type = getUserdataType(L, 2);
-		if (type != LuaData_Player && type != LuaData_Monster && type != LuaData_Npc) {
+		if (type != LuaData_Player && type != LuaData_Pokemon && type != LuaData_Npc) {
 			lua_pushnil(L);
 			return 1;
 		}
@@ -7962,7 +7962,7 @@ int LuaScriptInterface::luaCreatureTeleportTo(lua_State* L)
 
 int LuaScriptInterface::luaCreatureSay(lua_State* L)
 {
-	// creature:say(text[, type = TALKTYPE_MONSTER_SAY[, ghost = false[, target = nullptr[, position]]]])
+	// creature:say(text[, type = TALKTYPE_POKEMON_SAY[, ghost = false[, target = nullptr[, position]]]])
 	int parameters = lua_gettop(L);
 
 	Position position;
@@ -7982,7 +7982,7 @@ int LuaScriptInterface::luaCreatureSay(lua_State* L)
 
 	bool ghost = getBoolean(L, 4, false);
 
-	SpeakClasses type = getNumber<SpeakClasses>(L, 3, TALKTYPE_MONSTER_SAY);
+	SpeakClasses type = getNumber<SpeakClasses>(L, 3, TALKTYPE_POKEMON_SAY);
 	const std::string& text = getString(L, 2);
 	Creature* creature = getUserdata<Creature>(L, 1);
 	if (!creature) {
@@ -10275,125 +10275,125 @@ int LuaScriptInterface::luaPlayerGetStoreInbox(lua_State* L)
 	return 1;
 }
 
-// Monster
-int LuaScriptInterface::luaMonsterCreate(lua_State* L)
+// Pokemon
+int LuaScriptInterface::luaPokemonCreate(lua_State* L)
 {
-	// Monster(id or userdata)
-	Monster* monster;
+	// Pokemon(id or userdata)
+	Pokemon* pokemon;
 	if (isNumber(L, 2)) {
-		monster = g_game.getMonsterByID(getNumber<uint32_t>(L, 2));
+		pokemon = g_game.getPokemonByID(getNumber<uint32_t>(L, 2));
 	} else if (isUserdata(L, 2)) {
-		if (getUserdataType(L, 2) != LuaData_Monster) {
+		if (getUserdataType(L, 2) != LuaData_Pokemon) {
 			lua_pushnil(L);
 			return 1;
 		}
-		monster = getUserdata<Monster>(L, 2);
+		pokemon = getUserdata<Pokemon>(L, 2);
 	} else {
-		monster = nullptr;
+		pokemon = nullptr;
 	}
 
-	if (monster) {
-		pushUserdata<Monster>(L, monster);
-		setMetatable(L, -1, "Monster");
-	} else {
-		lua_pushnil(L);
-	}
-	return 1;
-}
-
-int LuaScriptInterface::luaMonsterIsMonster(lua_State* L)
-{
-	// monster:isMonster()
-	pushBoolean(L, getUserdata<const Monster>(L, 1) != nullptr);
-	return 1;
-}
-
-int LuaScriptInterface::luaMonsterGetType(lua_State* L)
-{
-	// monster:getType()
-	const Monster* monster = getUserdata<const Monster>(L, 1);
-	if (monster) {
-		pushUserdata<MonsterType>(L, monster->mType);
-		setMetatable(L, -1, "MonsterType");
+	if (pokemon) {
+		pushUserdata<Pokemon>(L, pokemon);
+		setMetatable(L, -1, "Pokemon");
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterRename(lua_State* L)
+int LuaScriptInterface::luaPokemonIsPokemon(lua_State* L)
 {
-	// monster:rename(name[, nameDescription])
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (!monster) {
+	// pokemon:isPokemon()
+	pushBoolean(L, getUserdata<const Pokemon>(L, 1) != nullptr);
+	return 1;
+}
+
+int LuaScriptInterface::luaPokemonGetType(lua_State* L)
+{
+	// pokemon:getType()
+	const Pokemon* pokemon = getUserdata<const Pokemon>(L, 1);
+	if (pokemon) {
+		pushUserdata<PokemonType>(L, pokemon->mType);
+		setMetatable(L, -1, "PokemonType");
+	} else {
+		lua_pushnil(L);
+	}
+	return 1;
+}
+
+int LuaScriptInterface::luaPokemonRename(lua_State* L)
+{
+	// pokemon:rename(name[, nameDescription])
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	monster->setName(getString(L, 2));
+	pokemon->setName(getString(L, 2));
 	if (lua_gettop(L) >= 3) {
-		monster->setNameDescription(getString(L, 3));
+		pokemon->setNameDescription(getString(L, 3));
 	}
 
 	pushBoolean(L, true);
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterGetSpawnPosition(lua_State* L)
+int LuaScriptInterface::luaPokemonGetSpawnPosition(lua_State* L)
 {
-	// monster:getSpawnPosition()
-	const Monster* monster = getUserdata<const Monster>(L, 1);
-	if (monster) {
-		pushPosition(L, monster->getMasterPos());
+	// pokemon:getSpawnPosition()
+	const Pokemon* pokemon = getUserdata<const Pokemon>(L, 1);
+	if (pokemon) {
+		pushPosition(L, pokemon->getMasterPos());
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterIsInSpawnRange(lua_State* L)
+int LuaScriptInterface::luaPokemonIsInSpawnRange(lua_State* L)
 {
-	// monster:isInSpawnRange([position])
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
-		pushBoolean(L, monster->isInSpawnRange(lua_gettop(L) >= 2 ? getPosition(L, 2) : monster->getPosition()));
+	// pokemon:isInSpawnRange([position])
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
+		pushBoolean(L, pokemon->isInSpawnRange(lua_gettop(L) >= 2 ? getPosition(L, 2) : pokemon->getPosition()));
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterIsIdle(lua_State* L)
+int LuaScriptInterface::luaPokemonIsIdle(lua_State* L)
 {
-	// monster:isIdle()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
-		pushBoolean(L, monster->getIdleStatus());
+	// pokemon:isIdle()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
+		pushBoolean(L, pokemon->getIdleStatus());
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSetIdle(lua_State* L)
+int LuaScriptInterface::luaPokemonSetIdle(lua_State* L)
 {
-	// monster:setIdle(idle)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (!monster) {
+	// pokemon:setIdle(idle)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	monster->setIdle(getBoolean(L, 2));
+	pokemon->setIdle(getBoolean(L, 2));
 	pushBoolean(L, true);
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterIsTarget(lua_State* L)
+int LuaScriptInterface::luaPokemonIsTarget(lua_State* L)
 {
-	// monster:isTarget(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:isTarget(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		const Creature* creature = getCreature(L, 2);
 		if (!creature) {
 			reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -10401,18 +10401,18 @@ int LuaScriptInterface::luaMonsterIsTarget(lua_State* L)
 			return 1;
 		}
 
-		pushBoolean(L, monster->isTarget(creature));
+		pushBoolean(L, pokemon->isTarget(creature));
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterIsOpponent(lua_State* L)
+int LuaScriptInterface::luaPokemonIsOpponent(lua_State* L)
 {
-	// monster:isOpponent(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:isOpponent(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		const Creature* creature = getCreature(L, 2);
 		if (!creature) {
 			reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -10420,18 +10420,18 @@ int LuaScriptInterface::luaMonsterIsOpponent(lua_State* L)
 			return 1;
 		}
 
-		pushBoolean(L, monster->isOpponent(creature));
+		pushBoolean(L, pokemon->isOpponent(creature));
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterIsFriend(lua_State* L)
+int LuaScriptInterface::luaPokemonIsFriend(lua_State* L)
 {
-	// monster:isFriend(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:isFriend(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		const Creature* creature = getCreature(L, 2);
 		if (!creature) {
 			reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -10439,18 +10439,18 @@ int LuaScriptInterface::luaMonsterIsFriend(lua_State* L)
 			return 1;
 		}
 
-		pushBoolean(L, monster->isFriend(creature));
+		pushBoolean(L, pokemon->isFriend(creature));
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterAddFriend(lua_State* L)
+int LuaScriptInterface::luaPokemonAddFriend(lua_State* L)
 {
-	// monster:addFriend(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:addFriend(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		Creature* creature = getCreature(L, 2);
 		if (!creature) {
 			reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -10458,7 +10458,7 @@ int LuaScriptInterface::luaMonsterAddFriend(lua_State* L)
 			return 1;
 		}
 
-		monster->addFriend(creature);
+		pokemon->addFriend(creature);
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -10466,11 +10466,11 @@ int LuaScriptInterface::luaMonsterAddFriend(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterRemoveFriend(lua_State* L)
+int LuaScriptInterface::luaPokemonRemoveFriend(lua_State* L)
 {
-	// monster:removeFriend(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:removeFriend(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		Creature* creature = getCreature(L, 2);
 		if (!creature) {
 			reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -10478,7 +10478,7 @@ int LuaScriptInterface::luaMonsterRemoveFriend(lua_State* L)
 			return 1;
 		}
 
-		monster->removeFriend(creature);
+		pokemon->removeFriend(creature);
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -10486,16 +10486,16 @@ int LuaScriptInterface::luaMonsterRemoveFriend(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterGetFriendList(lua_State* L)
+int LuaScriptInterface::luaPokemonGetFriendList(lua_State* L)
 {
-	// monster:getFriendList()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (!monster) {
+	// pokemon:getFriendList()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	const auto& friendList = monster->getFriendList();
+	const auto& friendList = pokemon->getFriendList();
 	lua_createtable(L, friendList.size(), 0);
 
 	int index = 0;
@@ -10507,23 +10507,23 @@ int LuaScriptInterface::luaMonsterGetFriendList(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterGetFriendCount(lua_State* L)
+int LuaScriptInterface::luaPokemonGetFriendCount(lua_State* L)
 {
-	// monster:getFriendCount()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
-		lua_pushnumber(L, monster->getFriendList().size());
+	// pokemon:getFriendCount()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
+		lua_pushnumber(L, pokemon->getFriendList().size());
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterAddTarget(lua_State* L)
+int LuaScriptInterface::luaPokemonAddTarget(lua_State* L)
 {
-	// monster:addTarget(creature[, pushFront = false])
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (!monster) {
+	// pokemon:addTarget(creature[, pushFront = false])
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
@@ -10536,16 +10536,16 @@ int LuaScriptInterface::luaMonsterAddTarget(lua_State* L)
 	}
 
 	bool pushFront = getBoolean(L, 3, false);
-	monster->addTarget(creature, pushFront);
+	pokemon->addTarget(creature, pushFront);
 	pushBoolean(L, true);
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterRemoveTarget(lua_State* L)
+int LuaScriptInterface::luaPokemonRemoveTarget(lua_State* L)
 {
-	// monster:removeTarget(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (!monster) {
+	// pokemon:removeTarget(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
@@ -10557,21 +10557,21 @@ int LuaScriptInterface::luaMonsterRemoveTarget(lua_State* L)
 		return 1;
 	}
 
-	monster->removeTarget(creature);
+	pokemon->removeTarget(creature);
 	pushBoolean(L, true);
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterGetTargetList(lua_State* L)
+int LuaScriptInterface::luaPokemonGetTargetList(lua_State* L)
 {
-	// monster:getTargetList()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (!monster) {
+	// pokemon:getTargetList()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (!pokemon) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	const auto& targetList = monster->getTargetList();
+	const auto& targetList = pokemon->getTargetList();
 	lua_createtable(L, targetList.size(), 0);
 
 	int index = 0;
@@ -10583,23 +10583,23 @@ int LuaScriptInterface::luaMonsterGetTargetList(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterGetTargetCount(lua_State* L)
+int LuaScriptInterface::luaPokemonGetTargetCount(lua_State* L)
 {
-	// monster:getTargetCount()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
-		lua_pushnumber(L, monster->getTargetList().size());
+	// pokemon:getTargetCount()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
+		lua_pushnumber(L, pokemon->getTargetList().size());
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSelectTarget(lua_State* L)
+int LuaScriptInterface::luaPokemonSelectTarget(lua_State* L)
 {
-	// monster:selectTarget(creature)
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:selectTarget(creature)
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		Creature* creature = getCreature(L, 2);
 		if (!creature) {
 			reportErrorFunc(L, getErrorDesc(LUA_ERROR_CREATURE_NOT_FOUND));
@@ -10607,44 +10607,44 @@ int LuaScriptInterface::luaMonsterSelectTarget(lua_State* L)
 			return 1;
 		}
 
-		pushBoolean(L, monster->selectTarget(creature));
+		pushBoolean(L, pokemon->selectTarget(creature));
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSearchTarget(lua_State* L)
+int LuaScriptInterface::luaPokemonSearchTarget(lua_State* L)
 {
-	// monster:searchTarget([searchType = TARGETSEARCH_DEFAULT])
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
+	// pokemon:searchTarget([searchType = TARGETSEARCH_DEFAULT])
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
 		TargetSearchType_t searchType = getNumber<TargetSearchType_t>(L, 2, TARGETSEARCH_DEFAULT);
-		pushBoolean(L, monster->searchTarget(searchType));
+		pushBoolean(L, pokemon->searchTarget(searchType));
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterIsWalkingToSpawn(lua_State* L)
+int LuaScriptInterface::luaPokemonIsWalkingToSpawn(lua_State* L)
 {
-	// monster:isWalkingToSpawn()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
-		pushBoolean(L, monster->isWalkingToSpawn());
+	// pokemon:isWalkingToSpawn()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
+		pushBoolean(L, pokemon->isWalkingToSpawn());
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterWalkToSpawn(lua_State* L)
+int LuaScriptInterface::luaPokemonWalkToSpawn(lua_State* L)
 {
-	// monster:walkToSpawn()
-	Monster* monster = getUserdata<Monster>(L, 1);
-	if (monster) {
-		pushBoolean(L, monster->walkToSpawn());
+	// pokemon:walkToSpawn()
+	Pokemon* pokemon = getUserdata<Pokemon>(L, 1);
+	if (pokemon) {
+		pushBoolean(L, pokemon->walkToSpawn());
 	} else {
 		lua_pushnil(L);
 	}
@@ -12690,7 +12690,7 @@ int LuaScriptInterface::luaCombatExecute(lua_State* L)
 
 	if (isUserdata(L, 2)) {
 		LuaDataType type = getUserdataType(L, 2);
-		if (type != LuaData_Player && type != LuaData_Monster && type != LuaData_Npc) {
+		if (type != LuaData_Player && type != LuaData_Pokemon && type != LuaData_Npc) {
 			pushBoolean(L, false);
 			return 1;
 		}
@@ -13005,29 +13005,29 @@ int LuaScriptInterface::luaOutfitCompare(lua_State* L)
 	return 1;
 }
 
-// MonsterType
-int LuaScriptInterface::luaMonsterTypeCreate(lua_State* L)
+// PokemonType
+int LuaScriptInterface::luaPokemonTypeCreate(lua_State* L)
 {
-	// MonsterType(name)
-	MonsterType* monsterType = g_monsters.getMonsterType(getString(L, 2));
-	if (monsterType) {
-		pushUserdata<MonsterType>(L, monsterType);
-		setMetatable(L, -1, "MonsterType");
+	// PokemonType(name)
+	PokemonType* pokemonType = g_pokemons.getPokemonType(getString(L, 2));
+	if (pokemonType) {
+		pushUserdata<PokemonType>(L, pokemonType);
+		setMetatable(L, -1, "PokemonType");
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsAttackable(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsAttackable(lua_State* L)
 {
-	// get: monsterType:isAttackable() set: monsterType:isAttackable(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isAttackable() set: pokemonType:isAttackable(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isAttackable);
+			pushBoolean(L, pokemonType->info.isAttackable);
 		} else {
-			monsterType->info.isAttackable = getBoolean(L, 2);
+			pokemonType->info.isAttackable = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13036,15 +13036,15 @@ int LuaScriptInterface::luaMonsterTypeIsAttackable(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsChallengeable(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsChallengeable(lua_State* L)
 {
-	// get: monsterType:isChallengeable() set: monsterType:isChallengeable(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isChallengeable() set: pokemonType:isChallengeable(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isChallengeable);
+			pushBoolean(L, pokemonType->info.isChallengeable);
 		} else {
-			monsterType->info.isChallengeable = getBoolean(L, 2);
+			pokemonType->info.isChallengeable = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13053,15 +13053,15 @@ int LuaScriptInterface::luaMonsterTypeIsChallengeable(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsConvinceable(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsConvinceable(lua_State* L)
 {
-	// get: monsterType:isConvinceable() set: monsterType:isConvinceable(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isConvinceable() set: pokemonType:isConvinceable(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isConvinceable);
+			pushBoolean(L, pokemonType->info.isConvinceable);
 		} else {
-			monsterType->info.isConvinceable = getBoolean(L, 2);
+			pokemonType->info.isConvinceable = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13070,15 +13070,15 @@ int LuaScriptInterface::luaMonsterTypeIsConvinceable(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsSummonable(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsSummonable(lua_State* L)
 {
-	// get: monsterType:isSummonable() set: monsterType:isSummonable(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isSummonable() set: pokemonType:isSummonable(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isSummonable);
+			pushBoolean(L, pokemonType->info.isSummonable);
 		} else {
-			monsterType->info.isSummonable = getBoolean(L, 2);
+			pokemonType->info.isSummonable = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13087,15 +13087,15 @@ int LuaScriptInterface::luaMonsterTypeIsSummonable(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsIgnoringSpawnBlock(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsIgnoringSpawnBlock(lua_State* L)
 {
-	// get: monsterType:isIgnoringSpawnBlock() set: monsterType:isIgnoringSpawnBlock(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isIgnoringSpawnBlock() set: pokemonType:isIgnoringSpawnBlock(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isIgnoringSpawnBlock);
+			pushBoolean(L, pokemonType->info.isIgnoringSpawnBlock);
 		} else {
-			monsterType->info.isIgnoringSpawnBlock = getBoolean(L, 2);
+			pokemonType->info.isIgnoringSpawnBlock = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13104,15 +13104,15 @@ int LuaScriptInterface::luaMonsterTypeIsIgnoringSpawnBlock(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsIllusionable(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsIllusionable(lua_State* L)
 {
-	// get: monsterType:isIllusionable() set: monsterType:isIllusionable(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isIllusionable() set: pokemonType:isIllusionable(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isIllusionable);
+			pushBoolean(L, pokemonType->info.isIllusionable);
 		} else {
-			monsterType->info.isIllusionable = getBoolean(L, 2);
+			pokemonType->info.isIllusionable = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13121,15 +13121,15 @@ int LuaScriptInterface::luaMonsterTypeIsIllusionable(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsHostile(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsHostile(lua_State* L)
 {
-	// get: monsterType:isHostile() set: monsterType:isHostile(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isHostile() set: pokemonType:isHostile(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isHostile);
+			pushBoolean(L, pokemonType->info.isHostile);
 		} else {
-			monsterType->info.isHostile = getBoolean(L, 2);
+			pokemonType->info.isHostile = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13138,15 +13138,15 @@ int LuaScriptInterface::luaMonsterTypeIsHostile(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsPushable(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsPushable(lua_State* L)
 {
-	// get: monsterType:isPushable() set: monsterType:isPushable(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isPushable() set: pokemonType:isPushable(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.pushable);
+			pushBoolean(L, pokemonType->info.pushable);
 		} else {
-			monsterType->info.pushable = getBoolean(L, 2);
+			pokemonType->info.pushable = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13155,15 +13155,15 @@ int LuaScriptInterface::luaMonsterTypeIsPushable(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsHealthHidden(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsHealthHidden(lua_State* L)
 {
-	// get: monsterType:isHealthHidden() set: monsterType:isHealthHidden(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isHealthHidden() set: pokemonType:isHealthHidden(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.hiddenHealth);
+			pushBoolean(L, pokemonType->info.hiddenHealth);
 		} else {
-			monsterType->info.hiddenHealth = getBoolean(L, 2);
+			pokemonType->info.hiddenHealth = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13172,15 +13172,15 @@ int LuaScriptInterface::luaMonsterTypeIsHealthHidden(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeIsBoss(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeIsBoss(lua_State* L)
 {
-	// get: monsterType:isBoss() set: monsterType:isBoss(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:isBoss() set: pokemonType:isBoss(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.isBoss);
+			pushBoolean(L, pokemonType->info.isBoss);
 		} else {
-			monsterType->info.isBoss = getBoolean(L, 2);
+			pokemonType->info.isBoss = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13189,15 +13189,15 @@ int LuaScriptInterface::luaMonsterTypeIsBoss(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCanPushItems(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCanPushItems(lua_State* L)
 {
-	// get: monsterType:canPushItems() set: monsterType:canPushItems(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:canPushItems() set: pokemonType:canPushItems(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.canPushItems);
+			pushBoolean(L, pokemonType->info.canPushItems);
 		} else {
-			monsterType->info.canPushItems = getBoolean(L, 2);
+			pokemonType->info.canPushItems = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13206,15 +13206,15 @@ int LuaScriptInterface::luaMonsterTypeCanPushItems(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCanPushCreatures(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCanPushCreatures(lua_State* L)
 {
-	// get: monsterType:canPushCreatures() set: monsterType:canPushCreatures(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:canPushCreatures() set: pokemonType:canPushCreatures(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.canPushCreatures);
+			pushBoolean(L, pokemonType->info.canPushCreatures);
 		} else {
-			monsterType->info.canPushCreatures = getBoolean(L, 2);
+			pokemonType->info.canPushCreatures = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13223,15 +13223,15 @@ int LuaScriptInterface::luaMonsterTypeCanPushCreatures(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCanWalkOnEnergy(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCanWalkOnEnergy(lua_State* L)
 {
-	// get: monsterType:canWalkOnEnergy() set: monsterType:canWalkOnEnergy(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:canWalkOnEnergy() set: pokemonType:canWalkOnEnergy(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.canWalkOnEnergy);
+			pushBoolean(L, pokemonType->info.canWalkOnEnergy);
 		} else {
-			monsterType->info.canWalkOnEnergy = getBoolean(L, 2);
+			pokemonType->info.canWalkOnEnergy = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13240,15 +13240,15 @@ int LuaScriptInterface::luaMonsterTypeCanWalkOnEnergy(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCanWalkOnFire(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCanWalkOnFire(lua_State* L)
 {
-	// get: monsterType:canWalkOnFire() set: monsterType:canWalkOnFire(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:canWalkOnFire() set: pokemonType:canWalkOnFire(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.canWalkOnFire);
+			pushBoolean(L, pokemonType->info.canWalkOnFire);
 		} else {
-			monsterType->info.canWalkOnFire = getBoolean(L, 2);
+			pokemonType->info.canWalkOnFire = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13257,15 +13257,15 @@ int LuaScriptInterface::luaMonsterTypeCanWalkOnFire(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCanWalkOnPoison(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCanWalkOnPoison(lua_State* L)
 {
-	// get: monsterType:canWalkOnPoison() set: monsterType:canWalkOnPoison(bool)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:canWalkOnPoison() set: pokemonType:canWalkOnPoison(bool)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushBoolean(L, monsterType->info.canWalkOnPoison);
+			pushBoolean(L, pokemonType->info.canWalkOnPoison);
 		} else {
-			monsterType->info.canWalkOnPoison = getBoolean(L, 2);
+			pokemonType->info.canWalkOnPoison = getBoolean(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13274,15 +13274,15 @@ int LuaScriptInterface::luaMonsterTypeCanWalkOnPoison(lua_State* L)
 	return 1;
 }
 
-int32_t LuaScriptInterface::luaMonsterTypeName(lua_State* L)
+int32_t LuaScriptInterface::luaPokemonTypeName(lua_State* L)
 {
-	// get: monsterType:name() set: monsterType:name(name)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:name() set: pokemonType:name(name)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushString(L, monsterType->name);
+			pushString(L, pokemonType->name);
 		} else {
-			monsterType->name = getString(L, 2);
+			pokemonType->name = getString(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13291,15 +13291,15 @@ int32_t LuaScriptInterface::luaMonsterTypeName(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeNameDescription(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeNameDescription(lua_State* L)
 {
-	// get: monsterType:nameDescription() set: monsterType:nameDescription(desc)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:nameDescription() set: pokemonType:nameDescription(desc)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushString(L, monsterType->nameDescription);
+			pushString(L, pokemonType->nameDescription);
 		} else {
-			monsterType->nameDescription = getString(L, 2);
+			pokemonType->nameDescription = getString(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13308,15 +13308,15 @@ int LuaScriptInterface::luaMonsterTypeNameDescription(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeHealth(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeHealth(lua_State* L)
 {
-	// get: monsterType:health() set: monsterType:health(health)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:health() set: pokemonType:health(health)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.health);
+			lua_pushnumber(L, pokemonType->info.health);
 		} else {
-			monsterType->info.health = getNumber<int32_t>(L, 2);
+			pokemonType->info.health = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13325,15 +13325,15 @@ int LuaScriptInterface::luaMonsterTypeHealth(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeMaxHealth(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeMaxHealth(lua_State* L)
 {
-	// get: monsterType:maxHealth() set: monsterType:maxHealth(health)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:maxHealth() set: pokemonType:maxHealth(health)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.healthMax);
+			lua_pushnumber(L, pokemonType->info.healthMax);
 		} else {
-			monsterType->info.healthMax = getNumber<int32_t>(L, 2);
+			pokemonType->info.healthMax = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13342,15 +13342,15 @@ int LuaScriptInterface::luaMonsterTypeMaxHealth(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeRunHealth(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeRunHealth(lua_State* L)
 {
-	// get: monsterType:runHealth() set: monsterType:runHealth(health)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:runHealth() set: pokemonType:runHealth(health)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.runAwayHealth);
+			lua_pushnumber(L, pokemonType->info.runAwayHealth);
 		} else {
-			monsterType->info.runAwayHealth = getNumber<int32_t>(L, 2);
+			pokemonType->info.runAwayHealth = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13359,15 +13359,15 @@ int LuaScriptInterface::luaMonsterTypeRunHealth(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeExperience(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeExperience(lua_State* L)
 {
-	// get: monsterType:experience() set: monsterType:experience(exp)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:experience() set: pokemonType:experience(exp)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.experience);
+			lua_pushnumber(L, pokemonType->info.experience);
 		} else {
-			monsterType->info.experience = getNumber<uint64_t>(L, 2);
+			pokemonType->info.experience = getNumber<uint64_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13376,18 +13376,18 @@ int LuaScriptInterface::luaMonsterTypeExperience(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeSkull(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeSkull(lua_State* L)
 {
-	// get: monsterType:skull() set: monsterType:skull(str/constant)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:skull() set: pokemonType:skull(str/constant)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.skull);
+			lua_pushnumber(L, pokemonType->info.skull);
 		} else {
 			if (isNumber(L, 2)) {
-				monsterType->info.skull = getNumber<Skulls_t>(L, 2);
+				pokemonType->info.skull = getNumber<Skulls_t>(L, 2);
 			} else {
-				monsterType->info.skull = getSkullType(getString(L, 2));
+				pokemonType->info.skull = getSkullType(getString(L, 2));
 			}
 			pushBoolean(L, true);
 		}
@@ -13397,47 +13397,47 @@ int LuaScriptInterface::luaMonsterTypeSkull(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCombatImmunities(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCombatImmunities(lua_State* L)
 {
-	// get: monsterType:combatImmunities() set: monsterType:combatImmunities(immunity)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:combatImmunities() set: pokemonType:combatImmunities(immunity)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.damageImmunities);
+			lua_pushnumber(L, pokemonType->info.damageImmunities);
 		} else {
 			std::string immunity = getString(L, 2);
 			if (immunity == "physical") {
-				monsterType->info.damageImmunities |= COMBAT_PHYSICALDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_PHYSICALDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "energy") {
-				monsterType->info.damageImmunities |= COMBAT_ENERGYDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_ENERGYDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "fire") {
-				monsterType->info.damageImmunities |= COMBAT_FIREDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_FIREDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "poison" || immunity == "earth") {
-				monsterType->info.damageImmunities |= COMBAT_EARTHDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_EARTHDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "drown") {
-				monsterType->info.damageImmunities |= COMBAT_DROWNDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_DROWNDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "ice") {
-				monsterType->info.damageImmunities |= COMBAT_ICEDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_ICEDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "holy") {
-				monsterType->info.damageImmunities |= COMBAT_HOLYDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_HOLYDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "death") {
-				monsterType->info.damageImmunities |= COMBAT_DEATHDAMAGE;
+				pokemonType->info.damageImmunities |= COMBAT_DEATHDAMAGE;
 				pushBoolean(L, true);
 			} else if (immunity == "lifedrain") {
-				monsterType->info.damageImmunities |= COMBAT_LIFEDRAIN;
+				pokemonType->info.damageImmunities |= COMBAT_LIFEDRAIN;
 				pushBoolean(L, true);
 			} else if (immunity == "manadrain") {
-				monsterType->info.damageImmunities |= COMBAT_MANADRAIN;
+				pokemonType->info.damageImmunities |= COMBAT_MANADRAIN;
 				pushBoolean(L, true);
 			} else {
-				std::cout << "[Warning - Monsters::loadMonster] Unknown immunity name " << immunity << " for monster: " << monsterType->name << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Unknown immunity name " << immunity << " for pokemon: " << pokemonType->name << std::endl;
 				lua_pushnil(L);
 			}
 		}
@@ -13447,56 +13447,56 @@ int LuaScriptInterface::luaMonsterTypeCombatImmunities(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeConditionImmunities(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeConditionImmunities(lua_State* L)
 {
-	// get: monsterType:conditionImmunities() set: monsterType:conditionImmunities(immunity)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:conditionImmunities() set: pokemonType:conditionImmunities(immunity)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.conditionImmunities);
+			lua_pushnumber(L, pokemonType->info.conditionImmunities);
 		} else {
 			std::string immunity = getString(L, 2);
 			if (immunity == "physical") {
-				monsterType->info.conditionImmunities |= CONDITION_BLEEDING;
+				pokemonType->info.conditionImmunities |= CONDITION_BLEEDING;
 				pushBoolean(L, true);
 			} else if (immunity == "energy") {
-				monsterType->info.conditionImmunities |= CONDITION_ENERGY;
+				pokemonType->info.conditionImmunities |= CONDITION_ENERGY;
 				pushBoolean(L, true);
 			} else if (immunity == "fire") {
-				monsterType->info.conditionImmunities |= CONDITION_FIRE;
+				pokemonType->info.conditionImmunities |= CONDITION_FIRE;
 				pushBoolean(L, true);
 			} else if (immunity == "poison" || immunity == "earth") {
-				monsterType->info.conditionImmunities |= CONDITION_POISON;
+				pokemonType->info.conditionImmunities |= CONDITION_POISON;
 				pushBoolean(L, true);
 			} else if (immunity == "drown") {
-				monsterType->info.conditionImmunities |= CONDITION_DROWN;
+				pokemonType->info.conditionImmunities |= CONDITION_DROWN;
 				pushBoolean(L, true);
 			} else if (immunity == "ice") {
-				monsterType->info.conditionImmunities |= CONDITION_FREEZING;
+				pokemonType->info.conditionImmunities |= CONDITION_FREEZING;
 				pushBoolean(L, true);
 			} else if (immunity == "holy") {
-				monsterType->info.conditionImmunities |= CONDITION_DAZZLED;
+				pokemonType->info.conditionImmunities |= CONDITION_DAZZLED;
 				pushBoolean(L, true);
 			} else if (immunity == "death") {
-				monsterType->info.conditionImmunities |= CONDITION_CURSED;
+				pokemonType->info.conditionImmunities |= CONDITION_CURSED;
 				pushBoolean(L, true);
 			} else if (immunity == "paralyze") {
-				monsterType->info.conditionImmunities |= CONDITION_PARALYZE;
+				pokemonType->info.conditionImmunities |= CONDITION_PARALYZE;
 				pushBoolean(L, true);
 			} else if (immunity == "outfit") {
-				monsterType->info.conditionImmunities |= CONDITION_OUTFIT;
+				pokemonType->info.conditionImmunities |= CONDITION_OUTFIT;
 				pushBoolean(L, true);
 			} else if (immunity == "drunk") {
-				monsterType->info.conditionImmunities |= CONDITION_DRUNK;
+				pokemonType->info.conditionImmunities |= CONDITION_DRUNK;
 				pushBoolean(L, true);
 			} else if (immunity == "invisible" || immunity == "invisibility") {
-				monsterType->info.conditionImmunities |= CONDITION_INVISIBLE;
+				pokemonType->info.conditionImmunities |= CONDITION_INVISIBLE;
 				pushBoolean(L, true);
 			} else if (immunity == "bleed") {
-				monsterType->info.conditionImmunities |= CONDITION_BLEEDING;
+				pokemonType->info.conditionImmunities |= CONDITION_BLEEDING;
 				pushBoolean(L, true);
 			} else {
-				std::cout << "[Warning - Monsters::loadMonster] Unknown immunity name " << immunity << " for monster: " << monsterType->name << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Unknown immunity name " << immunity << " for pokemon: " << pokemonType->name << std::endl;
 				lua_pushnil(L);
 			}
 		}
@@ -13506,19 +13506,19 @@ int LuaScriptInterface::luaMonsterTypeConditionImmunities(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetAttackList(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetAttackList(lua_State* L)
 {
-	// monsterType:getAttackList()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getAttackList()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	lua_createtable(L, monsterType->info.attackSpells.size(), 0);
+	lua_createtable(L, pokemonType->info.attackSpells.size(), 0);
 
 	int index = 0;
-	for (const auto& spellBlock : monsterType->info.attackSpells) {
+	for (const auto& spellBlock : pokemonType->info.attackSpells) {
 		lua_createtable(L, 0, 8);
 
 		setField(L, "chance", spellBlock.chance);
@@ -13536,19 +13536,19 @@ int LuaScriptInterface::luaMonsterTypeGetAttackList(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeAddAttack(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeAddAttack(lua_State* L)
 {
-	// monsterType:addAttack(monsterspell)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
-		MonsterSpell* spell = getUserdata<MonsterSpell>(L, 2);
+	// pokemonType:addAttack(pokemonspell)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
+		PokemonSpell* spell = getUserdata<PokemonSpell>(L, 2);
 		if (spell) {
 			spellBlock_t sb;
-			if (g_monsters.deserializeSpell(spell, sb, monsterType->name)) {
-				monsterType->info.attackSpells.push_back(std::move(sb));
+			if (g_pokemons.deserializeSpell(spell, sb, pokemonType->name)) {
+				pokemonType->info.attackSpells.push_back(std::move(sb));
 			} else {
-				std::cout << monsterType->name << std::endl;
-				std::cout << "[Warning - Monsters::loadMonster] Cant load spell. " << spell->name << std::endl;
+				std::cout << pokemonType->name << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Cant load spell. " << spell->name << std::endl;
 			}
 		} else {
 			lua_pushnil(L);
@@ -13559,19 +13559,19 @@ int LuaScriptInterface::luaMonsterTypeAddAttack(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetDefenseList(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetDefenseList(lua_State* L)
 {
-	// monsterType:getDefenseList()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getDefenseList()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	lua_createtable(L, monsterType->info.defenseSpells.size(), 0);
+	lua_createtable(L, pokemonType->info.defenseSpells.size(), 0);
 
 	int index = 0;
-	for (const auto& spellBlock : monsterType->info.defenseSpells) {
+	for (const auto& spellBlock : pokemonType->info.defenseSpells) {
 		lua_createtable(L, 0, 8);
 
 		setField(L, "chance", spellBlock.chance);
@@ -13589,19 +13589,19 @@ int LuaScriptInterface::luaMonsterTypeGetDefenseList(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeAddDefense(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeAddDefense(lua_State* L)
 {
-	// monsterType:addDefense(monsterspell)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
-		MonsterSpell* spell = getUserdata<MonsterSpell>(L, 2);
+	// pokemonType:addDefense(pokemonspell)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
+		PokemonSpell* spell = getUserdata<PokemonSpell>(L, 2);
 		if (spell) {
 			spellBlock_t sb;
-			if (g_monsters.deserializeSpell(spell, sb, monsterType->name)) {
-				monsterType->info.defenseSpells.push_back(std::move(sb));
+			if (g_pokemons.deserializeSpell(spell, sb, pokemonType->name)) {
+				pokemonType->info.defenseSpells.push_back(std::move(sb));
 			} else {
-				std::cout << monsterType->name << std::endl;
-				std::cout << "[Warning - Monsters::loadMonster] Cant load spell. " << spell->name << std::endl;
+				std::cout << pokemonType->name << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Cant load spell. " << spell->name << std::endl;
 			}
 		} else {
 			lua_pushnil(L);
@@ -13612,30 +13612,30 @@ int LuaScriptInterface::luaMonsterTypeAddDefense(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetElementList(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetElementList(lua_State* L)
 {
-	// monsterType:getElementList()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getElementList()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	lua_createtable(L, monsterType->info.elementMap.size(), 0);
-	for (const auto& elementEntry : monsterType->info.elementMap) {
+	lua_createtable(L, pokemonType->info.elementMap.size(), 0);
+	for (const auto& elementEntry : pokemonType->info.elementMap) {
 		lua_pushnumber(L, elementEntry.second);
 		lua_rawseti(L, -2, elementEntry.first);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeAddElement(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeAddElement(lua_State* L)
 {
-	// monsterType:addElement(type, percent)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// pokemonType:addElement(type, percent)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		CombatType_t element = getNumber<CombatType_t>(L, 2);
-		monsterType->info.elementMap[element] = getNumber<int32_t>(L, 3);
+		pokemonType->info.elementMap[element] = getNumber<int32_t>(L, 3);
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -13643,18 +13643,18 @@ int LuaScriptInterface::luaMonsterTypeAddElement(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetVoices(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetVoices(lua_State* L)
 {
-	// monsterType:getVoices()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getVoices()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
 	int index = 0;
-	lua_createtable(L, monsterType->info.voiceVector.size(), 0);
-	for (const auto& voiceBlock : monsterType->info.voiceVector) {
+	lua_createtable(L, pokemonType->info.voiceVector.size(), 0);
+	for (const auto& voiceBlock : pokemonType->info.voiceVector) {
 		lua_createtable(L, 0, 2);
 		setField(L, "text", voiceBlock.text);
 		setField(L, "yellText", voiceBlock.yellText);
@@ -13663,17 +13663,17 @@ int LuaScriptInterface::luaMonsterTypeGetVoices(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeAddVoice(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeAddVoice(lua_State* L)
 {
-	// monsterType:addVoice(sentence, interval, chance, yell)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// pokemonType:addVoice(sentence, interval, chance, yell)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		voiceBlock_t voice;
 		voice.text = getString(L, 2);
-		monsterType->info.yellSpeedTicks = getNumber<uint32_t>(L, 3);
-		monsterType->info.yellChance = getNumber<uint32_t>(L, 4);
+		pokemonType->info.yellSpeedTicks = getNumber<uint32_t>(L, 3);
+		pokemonType->info.yellChance = getNumber<uint32_t>(L, 4);
 		voice.yellText = getBoolean(L, 5);
-		monsterType->info.voiceVector.push_back(voice);
+		pokemonType->info.voiceVector.push_back(voice);
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -13681,27 +13681,27 @@ int LuaScriptInterface::luaMonsterTypeAddVoice(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetLoot(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetLoot(lua_State* L)
 {
-	// monsterType:getLoot()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getLoot()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
-	pushLoot(L, monsterType->info.lootItems);
+	pushLoot(L, pokemonType->info.lootItems);
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeAddLoot(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeAddLoot(lua_State* L)
 {
-	// monsterType:addLoot(loot)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// pokemonType:addLoot(loot)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		Loot* loot = getUserdata<Loot>(L, 2);
 		if (loot) {
-			monsterType->loadLoot(monsterType, loot->lootBlock);
+			pokemonType->loadLoot(pokemonType, loot->lootBlock);
 			pushBoolean(L, true);
 		} else {
 			lua_pushnil(L);
@@ -13712,30 +13712,30 @@ int LuaScriptInterface::luaMonsterTypeAddLoot(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetCreatureEvents(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetCreatureEvents(lua_State* L)
 {
-	// monsterType:getCreatureEvents()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getCreatureEvents()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
 	int index = 0;
-	lua_createtable(L, monsterType->info.scripts.size(), 0);
-	for (const std::string& creatureEvent : monsterType->info.scripts) {
+	lua_createtable(L, pokemonType->info.scripts.size(), 0);
+	for (const std::string& creatureEvent : pokemonType->info.scripts) {
 		pushString(L, creatureEvent);
 		lua_rawseti(L, -2, ++index);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeRegisterEvent(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeRegisterEvent(lua_State* L)
 {
-	// monsterType:registerEvent(name)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
-		monsterType->info.scripts.push_back(getString(L, 2));
+	// pokemonType:registerEvent(name)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
+		pokemonType->info.scripts.push_back(getString(L, 2));
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -13743,16 +13743,16 @@ int LuaScriptInterface::luaMonsterTypeRegisterEvent(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeEventOnCallback(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeEventOnCallback(lua_State* L)
 {
-	// monsterType:onThink(callback)
-	// monsterType:onAppear(callback)
-	// monsterType:onDisappear(callback)
-	// monsterType:onMove(callback)
-	// monsterType:onSay(callback)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
-		if (monsterType->loadCallback(&g_scripts->getScriptInterface())) {
+	// pokemonType:onThink(callback)
+	// pokemonType:onAppear(callback)
+	// pokemonType:onDisappear(callback)
+	// pokemonType:onMove(callback)
+	// pokemonType:onSay(callback)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
+		if (pokemonType->loadCallback(&g_scripts->getScriptInterface())) {
 			pushBoolean(L, true);
 			return 1;
 		}
@@ -13763,12 +13763,12 @@ int LuaScriptInterface::luaMonsterTypeEventOnCallback(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeEventType(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeEventType(lua_State* L)
 {
-	// monstertype:eventType(event)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
-		monsterType->info.eventType = getNumber<MonstersEvent_t>(L, 2);
+	// pokemontype:eventType(event)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
+		pokemonType->info.eventType = getNumber<PokemonsEvent_t>(L, 2);
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -13776,18 +13776,18 @@ int LuaScriptInterface::luaMonsterTypeEventType(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeGetSummonList(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeGetSummonList(lua_State* L)
 {
-	// monsterType:getSummonList()
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// pokemonType:getSummonList()
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 
 	int index = 0;
-	lua_createtable(L, monsterType->info.summons.size(), 0);
-	for (const auto& summonBlock : monsterType->info.summons) {
+	lua_createtable(L, pokemonType->info.summons.size(), 0);
+	for (const auto& summonBlock : pokemonType->info.summons) {
 		lua_createtable(L, 0, 3);
 		setField(L, "name", summonBlock.name);
 		setField(L, "speed", summonBlock.speed);
@@ -13797,17 +13797,17 @@ int LuaScriptInterface::luaMonsterTypeGetSummonList(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeAddSummon(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeAddSummon(lua_State* L)
 {
-	// monsterType:addSummon(name, interval, chance[, max = -1])
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// pokemonType:addSummon(name, interval, chance[, max = -1])
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		summonBlock_t summon;
 		summon.name = getString(L, 2);
 		summon.speed = getNumber<int32_t>(L, 3);
 		summon.chance = getNumber<int32_t>(L, 4);
 		summon.max = getNumber<int32_t>(L, 5, -1);
-		monsterType->info.summons.push_back(summon);
+		pokemonType->info.summons.push_back(summon);
 		pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -13815,15 +13815,15 @@ int LuaScriptInterface::luaMonsterTypeAddSummon(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeMaxSummons(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeMaxSummons(lua_State* L)
 {
-	// get: monsterType:maxSummons() set: monsterType:maxSummons(ammount)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:maxSummons() set: pokemonType:maxSummons(ammount)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.maxSummons);
+			lua_pushnumber(L, pokemonType->info.maxSummons);
 		} else {
-			monsterType->info.maxSummons = getNumber<uint32_t>(L, 2);
+			pokemonType->info.maxSummons = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13832,15 +13832,15 @@ int LuaScriptInterface::luaMonsterTypeMaxSummons(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeArmor(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeArmor(lua_State* L)
 {
-	// get: monsterType:armor() set: monsterType:armor(armor)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:armor() set: pokemonType:armor(armor)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.armor);
+			lua_pushnumber(L, pokemonType->info.armor);
 		} else {
-			monsterType->info.armor = getNumber<int32_t>(L, 2);
+			pokemonType->info.armor = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13849,15 +13849,15 @@ int LuaScriptInterface::luaMonsterTypeArmor(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeDefense(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeDefense(lua_State* L)
 {
-	// get: monsterType:defense() set: monsterType:defense(defense)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:defense() set: pokemonType:defense(defense)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.defense);
+			lua_pushnumber(L, pokemonType->info.defense);
 		} else {
-			monsterType->info.defense = getNumber<int32_t>(L, 2);
+			pokemonType->info.defense = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13866,15 +13866,15 @@ int LuaScriptInterface::luaMonsterTypeDefense(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeOutfit(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeOutfit(lua_State* L)
 {
-	// get: monsterType:outfit() set: monsterType:outfit(outfit)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:outfit() set: pokemonType:outfit(outfit)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			pushOutfit(L, monsterType->info.outfit);
+			pushOutfit(L, pokemonType->info.outfit);
 		} else {
-			monsterType->info.outfit = getOutfit(L, 2);
+			pokemonType->info.outfit = getOutfit(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13883,27 +13883,27 @@ int LuaScriptInterface::luaMonsterTypeOutfit(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeRace(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeRace(lua_State* L)
 {
-	// get: monsterType:race() set: monsterType:race(race)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
+	// get: pokemonType:race() set: pokemonType:race(race)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
 	std::string race = getString(L, 2);
-	if (monsterType) {
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.race);
+			lua_pushnumber(L, pokemonType->info.race);
 		} else {
 			if (race == "venom") {
-				monsterType->info.race = RACE_VENOM;
+				pokemonType->info.race = RACE_VENOM;
 			} else if (race == "blood") {
-				monsterType->info.race = RACE_BLOOD;
+				pokemonType->info.race = RACE_BLOOD;
 			} else if (race == "undead") {
-				monsterType->info.race = RACE_UNDEAD;
+				pokemonType->info.race = RACE_UNDEAD;
 			} else if (race == "fire") {
-				monsterType->info.race = RACE_FIRE;
+				pokemonType->info.race = RACE_FIRE;
 			} else if (race == "energy") {
-				monsterType->info.race = RACE_ENERGY;
+				pokemonType->info.race = RACE_ENERGY;
 			} else {
-				std::cout << "[Warning - Monsters::loadMonster] Unknown race type " << race << "." << std::endl;
+				std::cout << "[Warning - Pokemons::loadPokemon] Unknown race type " << race << "." << std::endl;
 				lua_pushnil(L);
 				return 1;
 			}
@@ -13915,15 +13915,15 @@ int LuaScriptInterface::luaMonsterTypeRace(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeCorpseId(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeCorpseId(lua_State* L)
 {
-	// get: monsterType:corpseId() set: monsterType:corpseId(id)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:corpseId() set: pokemonType:corpseId(id)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.lookcorpse);
+			lua_pushnumber(L, pokemonType->info.lookcorpse);
 		} else {
-			monsterType->info.lookcorpse = getNumber<uint16_t>(L, 2);
+			pokemonType->info.lookcorpse = getNumber<uint16_t>(L, 2);
 			lua_pushboolean(L, true);
 		}
 	} else {
@@ -13932,15 +13932,15 @@ int LuaScriptInterface::luaMonsterTypeCorpseId(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeManaCost(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeManaCost(lua_State* L)
 {
-	// get: monsterType:manaCost() set: monsterType:manaCost(mana)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:manaCost() set: pokemonType:manaCost(mana)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.manaCost);
+			lua_pushnumber(L, pokemonType->info.manaCost);
 		} else {
-			monsterType->info.manaCost = getNumber<uint32_t>(L, 2);
+			pokemonType->info.manaCost = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13949,15 +13949,15 @@ int LuaScriptInterface::luaMonsterTypeManaCost(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeBaseSpeed(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeBaseSpeed(lua_State* L)
 {
-	// get: monsterType:baseSpeed() set: monsterType:baseSpeed(speed)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:baseSpeed() set: pokemonType:baseSpeed(speed)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.baseSpeed);
+			lua_pushnumber(L, pokemonType->info.baseSpeed);
 		} else {
-			monsterType->info.baseSpeed = getNumber<uint32_t>(L, 2);
+			pokemonType->info.baseSpeed = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -13966,35 +13966,35 @@ int LuaScriptInterface::luaMonsterTypeBaseSpeed(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeLight(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeLight(lua_State* L)
 {
-	// get: monsterType:light() set: monsterType:light(color, level)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (!monsterType) {
+	// get: pokemonType:light() set: pokemonType:light(color, level)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (!pokemonType) {
 		lua_pushnil(L);
 		return 1;
 	}
 	if (lua_gettop(L) == 1) {
-		lua_pushnumber(L, monsterType->info.light.level);
-		lua_pushnumber(L, monsterType->info.light.color);
+		lua_pushnumber(L, pokemonType->info.light.level);
+		lua_pushnumber(L, pokemonType->info.light.color);
 		return 2;
 	} else {
-		monsterType->info.light.color = getNumber<uint8_t>(L, 2);
-		monsterType->info.light.level = getNumber<uint8_t>(L, 3);
+		pokemonType->info.light.color = getNumber<uint8_t>(L, 2);
+		pokemonType->info.light.level = getNumber<uint8_t>(L, 3);
 		pushBoolean(L, true);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeStaticAttackChance(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeStaticAttackChance(lua_State* L)
 {
-	// get: monsterType:staticAttackChance() set: monsterType:staticAttackChance(chance)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:staticAttackChance() set: pokemonType:staticAttackChance(chance)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.staticAttackChance);
+			lua_pushnumber(L, pokemonType->info.staticAttackChance);
 		} else {
-			monsterType->info.staticAttackChance = getNumber<uint32_t>(L, 2);
+			pokemonType->info.staticAttackChance = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -14003,15 +14003,15 @@ int LuaScriptInterface::luaMonsterTypeStaticAttackChance(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeTargetDistance(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeTargetDistance(lua_State* L)
 {
-	// get: monsterType:targetDistance() set: monsterType:targetDistance(distance)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:targetDistance() set: pokemonType:targetDistance(distance)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.targetDistance);
+			lua_pushnumber(L, pokemonType->info.targetDistance);
 		} else {
-			monsterType->info.targetDistance = getNumber<int32_t>(L, 2);
+			pokemonType->info.targetDistance = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -14020,15 +14020,15 @@ int LuaScriptInterface::luaMonsterTypeTargetDistance(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeYellChance(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeYellChance(lua_State* L)
 {
-	// get: monsterType:yellChance() set: monsterType:yellChance(chance)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:yellChance() set: pokemonType:yellChance(chance)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.yellChance);
+			lua_pushnumber(L, pokemonType->info.yellChance);
 		} else {
-			monsterType->info.yellChance = getNumber<uint32_t>(L, 2);
+			pokemonType->info.yellChance = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -14037,15 +14037,15 @@ int LuaScriptInterface::luaMonsterTypeYellChance(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeYellSpeedTicks(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeYellSpeedTicks(lua_State* L)
 {
-	// get: monsterType:yellSpeedTicks() set: monsterType:yellSpeedTicks(rate)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:yellSpeedTicks() set: pokemonType:yellSpeedTicks(rate)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.yellSpeedTicks);
+			lua_pushnumber(L, pokemonType->info.yellSpeedTicks);
 		} else {
-			monsterType->info.yellSpeedTicks = getNumber<uint32_t>(L, 2);
+			pokemonType->info.yellSpeedTicks = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -14054,15 +14054,15 @@ int LuaScriptInterface::luaMonsterTypeYellSpeedTicks(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeChangeTargetChance(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeChangeTargetChance(lua_State* L)
 {
-	// get: monsterType:changeTargetChance() set: monsterType:changeTargetChance(chance)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:changeTargetChance() set: pokemonType:changeTargetChance(chance)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.changeTargetChance);
+			lua_pushnumber(L, pokemonType->info.changeTargetChance);
 		} else {
-			monsterType->info.changeTargetChance = getNumber<int32_t>(L, 2);
+			pokemonType->info.changeTargetChance = getNumber<int32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -14071,15 +14071,15 @@ int LuaScriptInterface::luaMonsterTypeChangeTargetChance(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterTypeChangeTargetSpeed(lua_State* L)
+int LuaScriptInterface::luaPokemonTypeChangeTargetSpeed(lua_State* L)
 {
-	// get: monsterType:changeTargetSpeed() set: monsterType:changeTargetSpeed(speed)
-	MonsterType* monsterType = getUserdata<MonsterType>(L, 1);
-	if (monsterType) {
+	// get: pokemonType:changeTargetSpeed() set: pokemonType:changeTargetSpeed(speed)
+	PokemonType* pokemonType = getUserdata<PokemonType>(L, 1);
+	if (pokemonType) {
 		if (lua_gettop(L) == 1) {
-			lua_pushnumber(L, monsterType->info.changeTargetSpeed);
+			lua_pushnumber(L, pokemonType->info.changeTargetSpeed);
 		} else {
-			monsterType->info.changeTargetSpeed = getNumber<uint32_t>(L, 2);
+			pokemonType->info.changeTargetSpeed = getNumber<uint32_t>(L, 2);
 			pushBoolean(L, true);
 		}
 	} else {
@@ -14222,35 +14222,35 @@ int LuaScriptInterface::luaLootAddChildLoot(lua_State* L)
 	return 1;
 }
 
-// MonsterSpell
-int LuaScriptInterface::luaCreateMonsterSpell(lua_State* L)
+// PokemonSpell
+int LuaScriptInterface::luaCreatePokemonSpell(lua_State* L)
 {
-	// MonsterSpell() will create a new Monster Spell
-	MonsterSpell* spell = new MonsterSpell();
+	// PokemonSpell() will create a new Pokemon Spell
+	PokemonSpell* spell = new PokemonSpell();
 	if (spell) {
-		pushUserdata<MonsterSpell>(L, spell);
-		setMetatable(L, -1, "MonsterSpell");
+		pushUserdata<PokemonSpell>(L, spell);
+		setMetatable(L, -1, "PokemonSpell");
 	} else {
 		lua_pushnil(L);
 	}
 	return 1;
 }
 
-int LuaScriptInterface::luaDeleteMonsterSpell(lua_State* L)
+int LuaScriptInterface::luaDeletePokemonSpell(lua_State* L)
 {
-	// monsterSpell:delete() monsterSpell:__gc()
-	MonsterSpell** monsterSpellPtr = getRawUserdata<MonsterSpell>(L, 1);
-	if (monsterSpellPtr && *monsterSpellPtr) {
-		delete *monsterSpellPtr;
-		*monsterSpellPtr = nullptr;
+	// pokemonSpell:delete() pokemonSpell:__gc()
+	PokemonSpell** pokemonSpellPtr = getRawUserdata<PokemonSpell>(L, 1);
+	if (pokemonSpellPtr && *pokemonSpellPtr) {
+		delete *pokemonSpellPtr;
+		*pokemonSpellPtr = nullptr;
 	}
 	return 0;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetType(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetType(lua_State* L)
 {
-	// monsterSpell:setType(type)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setType(type)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->name = getString(L, 2);
 		pushBoolean(L, true);
@@ -14260,10 +14260,10 @@ int LuaScriptInterface::luaMonsterSpellSetType(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetScriptName(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetScriptName(lua_State* L)
 {
-	// monsterSpell:setScriptName(name)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setScriptName(name)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->scriptName = getString(L, 2);
 		pushBoolean(L, true);
@@ -14273,10 +14273,10 @@ int LuaScriptInterface::luaMonsterSpellSetScriptName(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetChance(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetChance(lua_State* L)
 {
-	// monsterSpell:setChance(chance)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setChance(chance)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->chance = getNumber<uint8_t>(L, 2);
 		pushBoolean(L, true);
@@ -14286,10 +14286,10 @@ int LuaScriptInterface::luaMonsterSpellSetChance(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetInterval(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetInterval(lua_State* L)
 {
-	// monsterSpell:setInterval(interval)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setInterval(interval)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->interval = getNumber<uint16_t>(L, 2);
 		pushBoolean(L, true);
@@ -14299,10 +14299,10 @@ int LuaScriptInterface::luaMonsterSpellSetInterval(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetRange(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetRange(lua_State* L)
 {
-	// monsterSpell:setRange(range)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setRange(range)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->range = getNumber<uint8_t>(L, 2);
 		pushBoolean(L, true);
@@ -14312,10 +14312,10 @@ int LuaScriptInterface::luaMonsterSpellSetRange(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatValue(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatValue(lua_State* L)
 {
-	// monsterSpell:setCombatValue(min, max)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatValue(min, max)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->minCombatValue = getNumber<int32_t>(L, 2);
 		spell->maxCombatValue = getNumber<int32_t>(L, 3);
@@ -14326,10 +14326,10 @@ int LuaScriptInterface::luaMonsterSpellSetCombatValue(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatType(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatType(lua_State* L)
 {
-	// monsterSpell:setCombatType(combatType_t)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatType(combatType_t)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->combatType = getNumber<CombatType_t>(L, 2);
 		pushBoolean(L, true);
@@ -14339,10 +14339,10 @@ int LuaScriptInterface::luaMonsterSpellSetCombatType(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetAttackValue(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetAttackValue(lua_State* L)
 {
-	// monsterSpell:setAttackValue(attack, skill)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setAttackValue(attack, skill)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->attack = getNumber<int32_t>(L, 2);
 		spell->skill = getNumber<int32_t>(L, 3);
@@ -14353,10 +14353,10 @@ int LuaScriptInterface::luaMonsterSpellSetAttackValue(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetNeedTarget(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetNeedTarget(lua_State* L)
 {
-	// monsterSpell:setNeedTarget(bool)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setNeedTarget(bool)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->needTarget = getBoolean(L, 2);
 		pushBoolean(L, true);
@@ -14366,10 +14366,10 @@ int LuaScriptInterface::luaMonsterSpellSetNeedTarget(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetNeedDirection(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetNeedDirection(lua_State* L)
 {
-	// monsterSpell:setNeedDirection(bool)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setNeedDirection(bool)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->needDirection = getBoolean(L, 2);
 		pushBoolean(L, true);
@@ -14379,10 +14379,10 @@ int LuaScriptInterface::luaMonsterSpellSetNeedDirection(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatLength(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatLength(lua_State* L)
 {
-	// monsterSpell:setCombatLength(length)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatLength(length)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->length = getNumber<int32_t>(L, 2);
 		pushBoolean(L, true);
@@ -14392,10 +14392,10 @@ int LuaScriptInterface::luaMonsterSpellSetCombatLength(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatSpread(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatSpread(lua_State* L)
 {
-	// monsterSpell:setCombatSpread(spread)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatSpread(spread)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->spread = getNumber<int32_t>(L, 2);
 		pushBoolean(L, true);
@@ -14405,10 +14405,10 @@ int LuaScriptInterface::luaMonsterSpellSetCombatSpread(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatRadius(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatRadius(lua_State* L)
 {
-	// monsterSpell:setCombatRadius(radius)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatRadius(radius)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->radius = getNumber<int32_t>(L, 2);
 		pushBoolean(L, true);
@@ -14418,10 +14418,10 @@ int LuaScriptInterface::luaMonsterSpellSetCombatRadius(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetConditionType(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetConditionType(lua_State* L)
 {
-	// monsterSpell:setConditionType(type)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setConditionType(type)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->conditionType = getNumber<ConditionType_t>(L, 2);
 		pushBoolean(L, true);
@@ -14431,10 +14431,10 @@ int LuaScriptInterface::luaMonsterSpellSetConditionType(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetConditionDamage(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetConditionDamage(lua_State* L)
 {
-	// monsterSpell:setConditionDamage(min, max, start)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setConditionDamage(min, max, start)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->conditionMinDamage = getNumber<int32_t>(L, 2);
 		spell->conditionMaxDamage = getNumber<int32_t>(L, 3);
@@ -14446,10 +14446,10 @@ int LuaScriptInterface::luaMonsterSpellSetConditionDamage(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetConditionSpeedChange(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetConditionSpeedChange(lua_State* L)
 {
-	// monsterSpell:setConditionSpeedChange(minSpeed[, maxSpeed])
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setConditionSpeedChange(minSpeed[, maxSpeed])
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->minSpeedChange = getNumber<int32_t>(L, 2);
 		spell->maxSpeedChange = getNumber<int32_t>(L, 3, 0);
@@ -14460,10 +14460,10 @@ int LuaScriptInterface::luaMonsterSpellSetConditionSpeedChange(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetConditionDuration(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetConditionDuration(lua_State* L)
 {
-	// monsterSpell:setConditionDuration(duration)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setConditionDuration(duration)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->duration = getNumber<int32_t>(L, 2);
 		pushBoolean(L, true);
@@ -14473,10 +14473,10 @@ int LuaScriptInterface::luaMonsterSpellSetConditionDuration(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetConditionDrunkenness(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetConditionDrunkenness(lua_State* L)
 {
-	// monsterSpell:setConditionDrunkenness(drunkenness)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setConditionDrunkenness(drunkenness)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->drunkenness = getNumber<uint8_t>(L, 2);
 		pushBoolean(L, true);
@@ -14486,10 +14486,10 @@ int LuaScriptInterface::luaMonsterSpellSetConditionDrunkenness(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetConditionTickInterval(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetConditionTickInterval(lua_State* L)
 {
-	// monsterSpell:setConditionTickInterval(interval)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setConditionTickInterval(interval)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->tickInterval = getNumber<int32_t>(L, 2);
 		pushBoolean(L, true);
@@ -14499,10 +14499,10 @@ int LuaScriptInterface::luaMonsterSpellSetConditionTickInterval(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatShootEffect(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatShootEffect(lua_State* L)
 {
-	// monsterSpell:setCombatShootEffect(effect)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatShootEffect(effect)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->shoot = getNumber<ShootType_t>(L, 2);
 		pushBoolean(L, true);
@@ -14512,10 +14512,10 @@ int LuaScriptInterface::luaMonsterSpellSetCombatShootEffect(lua_State* L)
 	return 1;
 }
 
-int LuaScriptInterface::luaMonsterSpellSetCombatEffect(lua_State* L)
+int LuaScriptInterface::luaPokemonSpellSetCombatEffect(lua_State* L)
 {
-	// monsterSpell:setCombatEffect(effect)
-	MonsterSpell* spell = getUserdata<MonsterSpell>(L, 1);
+	// pokemonSpell:setCombatEffect(effect)
+	PokemonSpell* spell = getUserdata<PokemonSpell>(L, 1);
 	if (spell) {
 		spell->effect = getNumber<MagicEffectClasses>(L, 2);
 		pushBoolean(L, true);

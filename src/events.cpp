@@ -109,13 +109,13 @@ bool Events::load()
 			} else {
 				std::cout << "[Warning - Events::load] Unknown player method: " << methodName << std::endl;
 			}
-		} else if (className == "Monster") {
+		} else if (className == "Pokemon") {
 			if (methodName == "onDropLoot") {
-				info.monsterOnDropLoot = event;
+				info.pokemonOnDropLoot = event;
 			} else if (methodName == "onSpawn") {
-				info.monsterOnSpawn = event;
+				info.pokemonOnSpawn = event;
 			} else {
-				std::cout << "[Warning - Events::load] Unknown monster method: " << methodName << std::endl;
+				std::cout << "[Warning - Events::load] Unknown pokemon method: " << methodName << std::endl;
 			}
 		} else {
 			std::cout << "[Warning - Events::load] Unknown class: " << className << std::endl;
@@ -124,27 +124,27 @@ bool Events::load()
 	return true;
 }
 
-// Monster
-bool Events::eventMonsterOnSpawn(Monster* monster, const Position& position, bool startup, bool artificial)
+// Pokemon
+bool Events::eventPokemonOnSpawn(Pokemon* pokemon, const Position& position, bool startup, bool artificial)
 {
-	// Monster:onSpawn(position, startup, artificial)
-	if (info.monsterOnSpawn == -1) {
+	// Pokemon:onSpawn(position, startup, artificial)
+	if (info.pokemonOnSpawn == -1) {
 		return true;
 	}
 
 	if (!scriptInterface.reserveScriptEnv()) {
-		std::cout << "[Error - Events::monsterOnSpawn] Call stack overflow" << std::endl;
+		std::cout << "[Error - Events::pokemonOnSpawn] Call stack overflow" << std::endl;
 		return false;
 	}
 
 	ScriptEnvironment* env = scriptInterface.getScriptEnv();
-	env->setScriptId(info.monsterOnSpawn, &scriptInterface);
+	env->setScriptId(info.pokemonOnSpawn, &scriptInterface);
 
 	lua_State* L = scriptInterface.getLuaState();
-	scriptInterface.pushFunction(info.monsterOnSpawn);
+	scriptInterface.pushFunction(info.pokemonOnSpawn);
 
-	LuaScriptInterface::pushUserdata<Monster>(L, monster);
-	LuaScriptInterface::setMetatable(L, -1, "Monster");
+	LuaScriptInterface::pushUserdata<Pokemon>(L, pokemon);
+	LuaScriptInterface::setMetatable(L, -1, "Pokemon");
 	LuaScriptInterface::pushPosition(L, position);
 	LuaScriptInterface::pushBoolean(L, startup);
 	LuaScriptInterface::pushBoolean(L, artificial);
@@ -988,26 +988,26 @@ void Events::eventPlayerOnWrapItem(Player* player, Item* item)
 	scriptInterface.callVoidFunction(2);
 }
 
-void Events::eventMonsterOnDropLoot(Monster* monster, Container* corpse)
+void Events::eventPokemonOnDropLoot(Pokemon* pokemon, Container* corpse)
 {
-	// Monster:onDropLoot(corpse)
-	if (info.monsterOnDropLoot == -1) {
+	// Pokemon:onDropLoot(corpse)
+	if (info.pokemonOnDropLoot == -1) {
 		return;
 	}
 
 	if (!scriptInterface.reserveScriptEnv()) {
-		std::cout << "[Error - Events::eventMonsterOnDropLoot] Call stack overflow" << std::endl;
+		std::cout << "[Error - Events::eventPokemonOnDropLoot] Call stack overflow" << std::endl;
 		return;
 	}
 
 	ScriptEnvironment* env = scriptInterface.getScriptEnv();
-	env->setScriptId(info.monsterOnDropLoot, &scriptInterface);
+	env->setScriptId(info.pokemonOnDropLoot, &scriptInterface);
 
 	lua_State* L = scriptInterface.getLuaState();
-	scriptInterface.pushFunction(info.monsterOnDropLoot);
+	scriptInterface.pushFunction(info.pokemonOnDropLoot);
 
-	LuaScriptInterface::pushUserdata<Monster>(L, monster);
-	LuaScriptInterface::setMetatable(L, -1, "Monster");
+	LuaScriptInterface::pushUserdata<Pokemon>(L, pokemon);
+	LuaScriptInterface::setMetatable(L, -1, "Pokemon");
 
 	LuaScriptInterface::pushUserdata<Container>(L, corpse);
 	LuaScriptInterface::setMetatable(L, -1, "Container");

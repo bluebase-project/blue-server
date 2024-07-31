@@ -422,7 +422,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, isHotkey);
 	if (ret == RETURNVALUE_YOUCANNOTUSETHISBED) {
-		g_game.internalCreatureSay(player, TALKTYPE_MONSTER_SAY, getReturnMessage(ret), false);
+		g_game.internalCreatureSay(player, TALKTYPE_POKEMON_SAY, getReturnMessage(ret), false);
 		return false;
 	}
 

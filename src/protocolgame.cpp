@@ -2977,7 +2977,7 @@ void ProtocolGame::AddCreature(NetworkMessage& msg, const Creature* creature, bo
 		msg.addByte(player->getGuildEmblem(otherPlayer));
 	}
 
-	if (creatureType == CREATURETYPE_MONSTER) {
+	if (creatureType == CREATURETYPE_POKEMON) {
 		const Creature* master = creature->getMaster();
 		if (master) {
 			const Player* masterPlayer = master->getPlayer();

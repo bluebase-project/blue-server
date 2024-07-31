@@ -5,7 +5,7 @@
 
 #include "spawn.h"
 #include "game.h"
-#include "monster.h"
+#include "pokemon.h"
 #include "configmanager.h"
 #include "scheduler.h"
 
@@ -13,7 +13,7 @@
 #include "events.h"
 
 extern ConfigManager g_config;
-extern Monsters g_monsters;
+extern Pokemons g_pokemons;
 extern Game g_game;
 extern Events* g_events;
 
@@ -64,7 +64,7 @@ bool Spawns::loadFromXml(const std::string& filename)
 		Spawn& spawn = spawnList.front();
 
 		for (auto childNode : spawnNode.children()) {
-			if (strcasecmp(childNode.name(), "monsters") == 0) {
+			if (strcasecmp(childNode.name(), "pokemons") == 0) {
 				Position pos(
 					centerPos.x + pugi::cast<uint16_t>(childNode.attribute("x").value()),
 					centerPos.y + pugi::cast<uint16_t>(childNode.attribute("y").value()),
@@ -80,9 +80,9 @@ bool Spawns::loadFromXml(const std::string& filename)
 					continue;
 				}
 
-				size_t monstersCount = std::distance(childNode.children().begin(), childNode.children().end());
-				if (monstersCount == 0) {
-					std::cout << "[Warning - Spawns::loadFromXml] " << pos << " empty monsters set." << std::endl;
+				size_t pokemonsCount = std::distance(childNode.children().begin(), childNode.children().end());
+				if (pokemonsCount == 0) {
+					std::cout << "[Warning - Spawns::loadFromXml] " << pos << " empty pokemons set." << std::endl;
 					continue;
 				}
 
@@ -93,20 +93,20 @@ bool Spawns::loadFromXml(const std::string& filename)
 				sb.interval = interval;
 				sb.lastSpawn = 0;
 
-				for (auto monsterNode : childNode.children()) {
-					pugi::xml_attribute nameAttribute = monsterNode.attribute("name");
+				for (auto pokemonNode : childNode.children()) {
+					pugi::xml_attribute nameAttribute = pokemonNode.attribute("name");
 					if (!nameAttribute) {
 						continue;
 					}
 
-					MonsterType* mType = g_monsters.getMonsterType(nameAttribute.as_string());
+					PokemonType* mType = g_pokemons.getPokemonType(nameAttribute.as_string());
 					if (!mType) {
 						std::cout << "[Warning - Spawn::loadFromXml] " << pos << " can not find " << nameAttribute.as_string() << std::endl;
 						continue;
 					}
 
-					uint16_t chance = 100 / monstersCount;
-					pugi::xml_attribute chanceAttribute = monsterNode.attribute("chance");
+					uint16_t chance = 100 / pokemonsCount;
+					pugi::xml_attribute chanceAttribute = pokemonNode.attribute("chance");
 					if (chanceAttribute) {
 						chance = pugi::cast<uint16_t>(chanceAttribute.value());
 					}
@@ -123,19 +123,19 @@ bool Spawns::loadFromXml(const std::string& filename)
 				}
 
 				if (sb.mTypes.empty()) {
-					std::cout << "[Warning - Spawns::loadFromXml] " << pos << " empty monsters set." << std::endl;
+					std::cout << "[Warning - Spawns::loadFromXml] " << pos << " empty pokemons set." << std::endl;
 					continue;
 				}
 
 				sb.mTypes.shrink_to_fit();
 				if (sb.mTypes.size() > 1) {
-					std::sort(sb.mTypes.begin(), sb.mTypes.end(), [](std::pair<MonsterType*, uint16_t> a, std::pair<MonsterType*, uint16_t> b) {
+					std::sort(sb.mTypes.begin(), sb.mTypes.end(), [](std::pair<PokemonType*, uint16_t> a, std::pair<PokemonType*, uint16_t> b) {
 						return a.second > b.second;
 					});
 				}
 
 				spawn.addBlock(sb);
-			} else if (strcasecmp(childNode.name(), "monster") == 0) {
+			} else if (strcasecmp(childNode.name(), "pokemon") == 0) {
 				pugi::xml_attribute nameAttribute = childNode.attribute("name");
 				if (!nameAttribute) {
 					continue;
@@ -157,7 +157,7 @@ bool Spawns::loadFromXml(const std::string& filename)
 				);
 				int32_t interval = pugi::cast<int32_t>(childNode.attribute("spawntime").value()) * 1000;
 				if (interval >= MINSPAWN_INTERVAL && interval <= MAXSPAWN_INTERVAL) {
-					spawn.addMonster(nameAttribute.as_string(), pos, dir, static_cast<uint32_t>(interval));
+					spawn.addPokemon(nameAttribute.as_string(), pos, dir, static_cast<uint32_t>(interval));
 				} else {
 					if (interval < MINSPAWN_INTERVAL) {
 						std::cout << "[Warning - Spawns::loadFromXml] " << nameAttribute.as_string() << ' ' << pos << " spawntime can not be less than " << MINSPAWN_INTERVAL / 1000 << " seconds." << std::endl;
@@ -246,9 +246,9 @@ void Spawn::startSpawnCheck()
 Spawn::~Spawn()
 {
 	for (const auto& it : spawnedMap) {
-		Monster* monster = it.second;
-		monster->setSpawn(nullptr);
-		monster->decrementReferenceCounter();
+		Pokemon* pokemon = it.second;
+		pokemon->setSpawn(nullptr);
+		pokemon->decrementReferenceCounter();
 	}
 }
 
@@ -257,7 +257,7 @@ bool Spawn::findPlayer(const Position& pos)
 	SpectatorVec spectators;
 	g_game.map.getSpectators(spectators, pos, false, true);
 	for (Creature* spectator : spectators) {
-		if (!spectator->getPlayer()->hasFlag(PlayerFlag_IgnoredByMonsters)) {
+		if (!spectator->getPlayer()->hasFlag(PlayerFlag_IgnoredByPokemons)) {
 			return true;
 		}
 	}
@@ -269,23 +269,23 @@ bool Spawn::isInSpawnZone(const Position& pos)
 	return Spawns::isInZone(centerPos, radius, pos);
 }
 
-bool Spawn::spawnMonster(uint32_t spawnId, spawnBlock_t sb, bool startup/* = false*/)
+bool Spawn::spawnPokemon(uint32_t spawnId, spawnBlock_t sb, bool startup/* = false*/)
 {
 	bool isBlocked = !startup && findPlayer(sb.pos);
-	size_t monstersCount = sb.mTypes.size(), blockedMonsters = 0;
+	size_t pokemonsCount = sb.mTypes.size(), blockedPokemons = 0;
 
 	const auto spawnFunc = [&](bool roll) {
 		for (const auto& pair : sb.mTypes) {
 			if (isBlocked && !pair.first->info.isIgnoringSpawnBlock) {
-				++blockedMonsters;
+				++blockedPokemons;
 				continue;
 			}
 
 			if (!roll) {
-				return spawnMonster(spawnId, pair.first, sb.pos, sb.direction, startup);
+				return spawnPokemon(spawnId, pair.first, sb.pos, sb.direction, startup);
 			}
 
-			if (pair.second >= normal_random(1, 100) && spawnMonster(spawnId, pair.first, sb.pos, sb.direction, startup)) {
+			if (pair.second >= normal_random(1, 100) && spawnPokemon(spawnId, pair.first, sb.pos, sb.direction, startup)) {
 				return true;
 			}
 		}
@@ -294,12 +294,12 @@ bool Spawn::spawnMonster(uint32_t spawnId, spawnBlock_t sb, bool startup/* = fal
 	};
 
 	// Try to spawn something with chance check, unless it's single spawn
-	if (spawnFunc(monstersCount > 1)) {
+	if (spawnFunc(pokemonsCount > 1)) {
 		return true;
 	}
 
-	// Every monster spawn is blocked, bail out
-	if (monstersCount == blockedMonsters) {
+	// Every pokemon spawn is blocked, bail out
+	if (pokemonsCount == blockedPokemons) {
 		return false;
 	}
 
@@ -307,32 +307,32 @@ bool Spawn::spawnMonster(uint32_t spawnId, spawnBlock_t sb, bool startup/* = fal
 	return spawnFunc(false);
 }
 
-bool Spawn::spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& pos, Direction dir, bool startup/*= false*/)
+bool Spawn::spawnPokemon(uint32_t spawnId, PokemonType* mType, const Position& pos, Direction dir, bool startup/*= false*/)
 {
-	std::unique_ptr<Monster> monster_ptr(new Monster(mType));
-	if (!g_events->eventMonsterOnSpawn(monster_ptr.get(), pos, startup, false)) {
+	std::unique_ptr<Pokemon> pokemon_ptr(new Pokemon(mType));
+	if (!g_events->eventPokemonOnSpawn(pokemon_ptr.get(), pos, startup, false)) {
 		return false;
 	}
 
 	if (startup) {
 		//No need to send out events to the surrounding since there is no one out there to listen!
-		if (!g_game.internalPlaceCreature(monster_ptr.get(), pos, true)) {
-			std::cout << "[Warning - Spawns::startup] Couldn't spawn monster \"" << monster_ptr->getName() << "\" on position: " << pos << '.' << std::endl;
+		if (!g_game.internalPlaceCreature(pokemon_ptr.get(), pos, true)) {
+			std::cout << "[Warning - Spawns::startup] Couldn't spawn pokemon \"" << pokemon_ptr->getName() << "\" on position: " << pos << '.' << std::endl;
 			return false;
 		}
 	} else {
-		if (!g_game.placeCreature(monster_ptr.get(), pos, false, true)) {
+		if (!g_game.placeCreature(pokemon_ptr.get(), pos, false, true)) {
 			return false;
 		}
 	}
 
-	Monster* monster = monster_ptr.release();
-	monster->setDirection(dir);
-	monster->setSpawn(this);
-	monster->setMasterPos(pos);
-	monster->incrementReferenceCounter();
+	Pokemon* pokemon = pokemon_ptr.release();
+	pokemon->setDirection(dir);
+	pokemon->setSpawn(this);
+	pokemon->setMasterPos(pos);
+	pokemon->incrementReferenceCounter();
 
-	spawnedMap.insert({spawnId, monster});
+	spawnedMap.insert({spawnId, pokemon});
 	spawnMap[spawnId].lastSpawn = OTSYS_TIME();
 	return true;
 }
@@ -342,7 +342,7 @@ void Spawn::startup()
 	for (const auto& it : spawnMap) {
 		uint32_t spawnId = it.first;
 		const spawnBlock_t& sb = it.second;
-		spawnMonster(spawnId, sb, true);
+		spawnPokemon(spawnId, sb, true);
 	}
 }
 
@@ -362,7 +362,7 @@ void Spawn::checkSpawn()
 
 		spawnBlock_t& sb = it.second;
 		if (OTSYS_TIME() >= sb.lastSpawn + sb.interval) {
-			if (!spawnMonster(spawnId, sb)) {
+			if (!spawnPokemon(spawnId, sb)) {
 				sb.lastSpawn = OTSYS_TIME();
 				continue;
 			}
@@ -383,12 +383,12 @@ void Spawn::cleanup()
 	auto it = spawnedMap.begin();
 	while (it != spawnedMap.end()) {
 		uint32_t spawnId = it->first;
-		Monster* monster = it->second;
-		if (monster->isRemoved()) {
-			monster->decrementReferenceCounter();
+		Pokemon* pokemon = it->second;
+		if (pokemon->isRemoved()) {
+			pokemon->decrementReferenceCounter();
 			it = spawnedMap.erase(it);
-		} else if (!isInSpawnZone(monster->getPosition()) && spawnId != 0) {
-			spawnedMap.insert({0, monster});
+		} else if (!isInSpawnZone(pokemon->getPosition()) && spawnId != 0) {
+			spawnedMap.insert({0, pokemon});
 			it = spawnedMap.erase(it);
 		} else {
 			++it;
@@ -404,11 +404,11 @@ bool Spawn::addBlock(spawnBlock_t sb)
 	return true;
 }
 
-bool Spawn::addMonster(const std::string& name, const Position& pos, Direction dir, uint32_t interval)
+bool Spawn::addPokemon(const std::string& name, const Position& pos, Direction dir, uint32_t interval)
 {
-	MonsterType* mType = g_monsters.getMonsterType(name);
+	PokemonType* mType = g_pokemons.getPokemonType(name);
 	if (!mType) {
-		std::cout << "[Warning - Spawn::addMonster] Can not find " << name << std::endl;
+		std::cout << "[Warning - Spawn::addPokemon] Can not find " << name << std::endl;
 		return false;
 	}
 
@@ -422,11 +422,11 @@ bool Spawn::addMonster(const std::string& name, const Position& pos, Direction d
 	return addBlock(sb);
 }
 
-void Spawn::removeMonster(Monster* monster)
+void Spawn::removePokemon(Pokemon* pokemon)
 {
 	for (auto it = spawnedMap.begin(), end = spawnedMap.end(); it != end; ++it) {
-		if (it->second == monster) {
-			monster->decrementReferenceCounter();
+		if (it->second == pokemon) {
+			pokemon->decrementReferenceCounter();
 			spawnedMap.erase(it);
 			break;
 		}

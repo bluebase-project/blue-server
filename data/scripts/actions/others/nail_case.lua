@@ -8,7 +8,7 @@ local messages = {
 local nailCase = Action()
 
 function nailCase.onUse(player, item, fromPosition, target, toPosition, isHotkey)
-	if not target:isCreature() or not target:isMonster() or target:getMaster() then
+	if not target:isCreature() or not target:isPokemon() or target:getMaster() then
 		return false
 	end
 
@@ -28,7 +28,7 @@ function nailCase.onUse(player, item, fromPosition, target, toPosition, isHotkey
 
 	if math.random(100) >= 80 then
 		target:remove()
-		player:say("You failed to manicure the nails of the sensitive gravedigger. Before you can make amends, the creature runs away in agony.", TALKTYPE_MONSTER_SAY)
+		player:say("You failed to manicure the nails of the sensitive gravedigger. Before you can make amends, the creature runs away in agony.", TALKTYPE_POKEMON_SAY)
 		player:setStorageValue(PlayerStorageKeys.nailCaseUseCount, 0)
 		return true
 	end
@@ -37,11 +37,11 @@ function nailCase.onUse(player, item, fromPosition, target, toPosition, isHotkey
 	local count = player:getStorageValue(PlayerStorageKeys.nailCaseUseCount)
 	local message = messages[count]
 	if message then
-		player:say(message, TALKTYPE_MONSTER_SAY)
+		player:say(message, TALKTYPE_POKEMON_SAY)
 		return true
 	end
 
-	player:say("You did it! A completely manicured gravedigger is ready to follow you as your own personal trusty mount until the bitter end!", TALKTYPE_MONSTER_SAY)
+	player:say("You did it! A completely manicured gravedigger is ready to follow you as your own personal trusty mount until the bitter end!", TALKTYPE_POKEMON_SAY)
 	item:remove(1)
 	target:remove()
 	player:addMount(39)

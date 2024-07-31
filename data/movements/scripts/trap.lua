@@ -27,7 +27,7 @@ function onStepIn(creature, item, position, fromPosition)
 		return true
 	end
 
-	if creature:isMonster() or creature:isPlayer() then
+	if creature:isPokemon() or creature:isPlayer() then
 		doTargetCombat(0, creature, trap.type or COMBAT_PHYSICALDAMAGE, trap.damage[1], trap.damage[2], CONST_ME_NONE, true, false, false)
 	end
 

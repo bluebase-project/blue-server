@@ -13,8 +13,8 @@ enum RaidState_t {
 	RAIDSTATE_EXECUTING,
 };
 
-struct MonsterSpawn {
-	MonsterSpawn(std::string name, uint32_t minAmount, uint32_t maxAmount) :
+struct PokemonSpawn {
+	PokemonSpawn(std::string name, uint32_t minAmount, uint32_t maxAmount) :
 		name(std::move(name)), minAmount(minAmount), maxAmount(maxAmount) {}
 
 	std::string name;
@@ -22,8 +22,8 @@ struct MonsterSpawn {
 	uint32_t maxAmount;
 };
 
-//How many times it will try to find a tile to add the monster to before giving up
-static constexpr int32_t MAXIMUM_TRIES_PER_MONSTER = 10;
+//How many times it will try to find a tile to add the pokemon to before giving up
+static constexpr int32_t MAXIMUM_TRIES_PER_POKEMON = 10;
 static constexpr int32_t CHECK_RAIDS_INTERVAL = 60;
 static constexpr int32_t RAID_MINTICKS = 1000;
 
@@ -177,7 +177,7 @@ class SingleSpawnEvent final : public RaidEvent
 		bool executeEvent() override;
 
 	private:
-		std::string monsterName;
+		std::string pokemonName;
 		Position position;
 };
 
@@ -189,7 +189,7 @@ class AreaSpawnEvent final : public RaidEvent
 		bool executeEvent() override;
 
 	private:
-		std::list<MonsterSpawn> spawnList;
+		std::list<PokemonSpawn> spawnList;
 		Position fromPos, toPos;
 };
 

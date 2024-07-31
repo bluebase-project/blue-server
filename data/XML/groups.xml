@@ -19,13 +19,13 @@
 		<flags>
 			<flag cannotusecombat="1" />
 			<flag cannotattackplayer="1" />
-			<flag cannotattackmonster="1" />
+			<flag cannotattackpokemon="1" />
 			<flag cannotbeattacked="1" />
 			<flag canconvinceall="0" />
 			<flag cansummonall="0" />
 			<flag canillusionall="1" />
 			<flag cansenseinvisibility="1" />
-			<flag ignoredbymonsters="1" />
+			<flag ignoredbypokemons="1" />
 			<flag notgaininfight="1" />
 			<flag hasinfinitemana="0" />
 			<flag hasinfinitesoul="0" />
@@ -60,13 +60,13 @@
 		<flags>
 			<flag cannotusecombat="0" />
 			<flag cannotattackplayer="1" />
-			<flag cannotattackmonster="0" />
+			<flag cannotattackpokemon="0" />
 			<flag cannotbeattacked="1" />
 			<flag canconvinceall="1" />
 			<flag cansummonall="1" />
 			<flag canillusionall="1" />
 			<flag cansenseinvisibility="1" />
-			<flag ignoredbymonsters="1" />
+			<flag ignoredbypokemons="1" />
 			<flag notgaininfight="1" />
 			<flag hasinfinitemana="1" />
 			<flag hasinfinitesoul="1" />
@@ -101,13 +101,13 @@
 		<flags>
 			<flag cannotusecombat="0" />
 			<flag cannotattackplayer="1" />
-			<flag cannotattackmonster="0" />
+			<flag cannotattackpokemon="0" />
 			<flag cannotbeattacked="1" />
 			<flag canconvinceall="1" />
 			<flag cansummonall="1" />
 			<flag canillusionall="1" />
 			<flag cansenseinvisibility="1" />
-			<flag ignoredbymonsters="1" />
+			<flag ignoredbypokemons="1" />
 			<flag notgaininfight="1" />
 			<flag hasinfinitemana="1" />
 			<flag hasinfinitesoul="1" />
