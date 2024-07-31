@@ -9,11 +9,11 @@
 #include "container.h"
 #include "game.h"
 #include "pugicast.h"
-#include "spells.h"
+#include "moves.h"
 #include <fmt/format.h>
 
 extern Game g_game;
-extern Spells* g_spells;
+extern Moves* g_moves;
 extern Actions* g_actions;
 extern ConfigManager g_config;
 
@@ -296,7 +296,7 @@ Action* Actions::getAction(const Item* item)
 	}
 
 	//rune items
-	return g_spells->getRuneSpell(item->getID());
+	return g_moves->getRuneMove(item->getID());
 }
 
 ReturnValue Actions::internalUseItem(Player* player, const Position& pos, uint8_t index, Item* item, bool isHotkey)
@@ -422,7 +422,7 @@ bool Actions::useItem(Player* player, const Position& pos, uint8_t index, Item* 
 
 	ReturnValue ret = internalUseItem(player, pos, index, item, isHotkey);
 	if (ret == RETURNVALUE_YOUCANNOTUSETHISBED) {
-		g_game.internalCreatureSay(player, TALKTYPE_MONSTER_SAY, getReturnMessage(ret), false);
+		g_game.internalCreatureSay(player, TALKTYPE_POKEMON_SAY, getReturnMessage(ret), false);
 		return false;
 	}
 

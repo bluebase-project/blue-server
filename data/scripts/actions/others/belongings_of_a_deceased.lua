@@ -47,9 +47,9 @@ function belongings.onUse(player, item, fromPosition, target, toPosition, isHotk
 				player:addItem(gift, count)
 
 				local itemType = ItemType(gift)
-				player:say("You found " .. (count > 1 and count or (itemType:getArticle() ~= "" and itemType:getArticle() or "")) .. " " .. (count > 1 and itemType:getPluralName() or itemType:getName()) .. " in the bag.", TALKTYPE_MONSTER_SAY)
+				player:say("You found " .. (count > 1 and count or (itemType:getArticle() ~= "" and itemType:getArticle() or "")) .. " " .. (count > 1 and itemType:getPluralName() or itemType:getName()) .. " in the bag.", TALKTYPE_POKEMON_SAY)
 			else
-				player:say("You found nothing useful.", TALKTYPE_MONSTER_SAY)
+				player:say("You found nothing useful.", TALKTYPE_POKEMON_SAY)
 			end
 
 			item:getPosition():sendMagicEffect(CONST_ME_POFF)

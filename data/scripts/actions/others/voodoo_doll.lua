@@ -14,7 +14,7 @@ function voodooDoll.onUse(player, item, fromPosition, target, toPosition, isHotk
 		text = "You concentrate on your victim, hit the needle in the doll.......but nothing happens."
 	end
 
-	player:say(text, TALKTYPE_MONSTER_SAY, false, player)
+	player:say(text, TALKTYPE_POKEMON_SAY, false, player)
 	return true
 end
 

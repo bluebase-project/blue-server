@@ -31,7 +31,7 @@ Scheduler g_scheduler;
 
 Game g_game;
 ConfigManager g_config;
-Monsters g_monsters;
+Pokemons g_pokemons;
 Vocations g_vocations;
 extern Scripts* g_scripts;
 RSA g_RSA;
@@ -236,15 +236,15 @@ void mainLoader(int, char*[], ServiceManager* services)
 		return;
 	}
 
-	std::cout << ">> Loading monsters" << std::endl;
-	if (!g_monsters.loadFromXml()) {
-		startupErrorMessage("Unable to load monsters!");
+	std::cout << ">> Loading pokemons" << std::endl;
+	if (!g_pokemons.loadFromXml()) {
+		startupErrorMessage("Unable to load pokemons!");
 		return;
 	}
 
-	std::cout << ">> Loading lua monsters" << std::endl;
-	if (!g_scripts->loadScripts("monster", false, false)) {
-		startupErrorMessage("Failed to load lua monsters");
+	std::cout << ">> Loading lua pokemons" << std::endl;
+	if (!g_scripts->loadScripts("pokemon", false, false)) {
+		startupErrorMessage("Failed to load lua pokemons");
 		return;
 	}
 

@@ -77,20 +77,20 @@ mysqlSock = ""
 -- NOTE: classicAttackSpeed set to true makes players constantly attack at regular
 -- intervals regardless of other actions such as item (potion) use. This setting
 -- may cause high CPU usage with many players and potentially affect performance!
--- NOTE: forceMonsterTypesOnLoad loads all monster types on startup to validate them.
+-- NOTE: forcePokemonTypesOnLoad loads all pokemon types on startup to validate them.
 -- You can disable it to save some memory if you don't see any errors at startup.
 allowChangeOutfit = true
 freePremium = false
 kickIdlePlayerAfterMinutes = 15
 maxMessageBuffer = 4
-emoteSpells = false
+emoteMoves = false
 classicEquipmentSlots = false
 classicAttackSpeed = false
 showScriptsLogInConsole = false
 showOnlineStatusInCharlist = false
 yellMinimumLevel = 2
 yellAlwaysAllowPremium = false
-forceMonsterTypesOnLoad = true
+forcePokemonTypesOnLoad = true
 cleanProtectionZones = false
 luaItemDesc = false
 showPlayerLogInConsole = true
@@ -137,11 +137,11 @@ rateLoot = 2
 rateMagic = 3
 rateSpawn = 1
 
--- Monster Despawn Config
--- despawnRange is the amount of floors a monster can be from its spawn position
+-- Pokemon Despawn Config
+-- despawnRange is the amount of floors a pokemon can be from its spawn position
 -- despawnRadius is how many tiles away it can be from its spawn position
--- removeOnDespawn will remove the monster if true or teleport it back to its spawn position if false
--- walkToSpawnRadius is the allowed distance that the monster will stay away from spawn position when left with no targets, 0 to disable
+-- removeOnDespawn will remove the pokemon if true or teleport it back to its spawn position if false
+-- walkToSpawnRadius is the allowed distance that the pokemon will stay away from spawn position when left with no targets, 0 to disable
 deSpawnRange = 2
 deSpawnRadius = 50
 removeOnDespawn = true

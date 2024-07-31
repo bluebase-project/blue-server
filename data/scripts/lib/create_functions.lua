@@ -1,2 +1,2 @@
-createFunctions(MonsterType) -- creates get/set functions for MonsterType
-createFunctions(Spell) -- creates get/set functions for Spell
+createFunctions(PokemonType) -- creates get/set functions for PokemonType
+createFunctions(Move) -- creates get/set functions for Move

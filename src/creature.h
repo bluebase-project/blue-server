@@ -47,7 +47,7 @@ class Map;
 class Thing;
 class Container;
 class Player;
-class Monster;
+class Pokemon;
 class Npc;
 class Item;
 class Tile;
@@ -107,10 +107,10 @@ class Creature : virtual public Thing
 		virtual const Npc* getNpc() const {
 			return nullptr;
 		}
-		virtual Monster* getMonster() {
+		virtual Pokemon* getPokemon() {
 			return nullptr;
 		}
-		virtual const Monster* getMonster() const {
+		virtual const Pokemon* getPokemon() const {
 			return nullptr;
 		}
 

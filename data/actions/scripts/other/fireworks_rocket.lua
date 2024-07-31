@@ -4,7 +4,7 @@ function onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	else
 		local position = player:getPosition()
 		position:sendMagicEffect(CONST_ME_FIREAREA)
-		player:say("Ouch! Rather place it on the ground next time.", TALKTYPE_MONSTER_SAY)
+		player:say("Ouch! Rather place it on the ground next time.", TALKTYPE_POKEMON_SAY)
 		player:addAchievementProgress("Rocket in Pocket", 3)
 		doTargetCombat(0, player, COMBAT_PHYSICALDAMAGE, -10, -10, CONST_ME_EXPLOSIONAREA)
 	end

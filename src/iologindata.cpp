@@ -413,9 +413,9 @@ bool IOLoginData::loadPlayer(Player* player, DBResult_ptr result)
 		}
 	}
 
-	if ((result = db.storeQuery(fmt::format("SELECT `player_id`, `name` FROM `player_spells` WHERE `player_id` = {:d}", player->getGUID())))) {
+	if ((result = db.storeQuery(fmt::format("SELECT `player_id`, `name` FROM `player_moves` WHERE `player_id` = {:d}", player->getGUID())))) {
 		do {
-			player->learnedInstantSpellList.emplace_front(result->getString("name"));
+			player->learnedInstantMoveList.emplace_front(result->getString("name"));
 		} while (result->next());
 	}
 
@@ -730,19 +730,19 @@ bool IOLoginData::savePlayer(Player* player)
 		return false;
 	}
 
-	// learned spells
-	if (!db.executeQuery(fmt::format("DELETE FROM `player_spells` WHERE `player_id` = {:d}", player->getGUID()))) {
+	// learned moves
+	if (!db.executeQuery(fmt::format("DELETE FROM `player_moves` WHERE `player_id` = {:d}", player->getGUID()))) {
 		return false;
 	}
 
-	DBInsert spellsQuery("INSERT INTO `player_spells` (`player_id`, `name` ) VALUES ");
-	for (const std::string& spellName : player->learnedInstantSpellList) {
-		if (!spellsQuery.addRow(fmt::format("{:d}, {:s}", player->getGUID(), db.escapeString(spellName)))) {
+	DBInsert movesQuery("INSERT INTO `player_moves` (`player_id`, `name` ) VALUES ");
+	for (const std::string& moveName : player->learnedInstantMoveList) {
+		if (!movesQuery.addRow(fmt::format("{:d}, {:s}", player->getGUID(), db.escapeString(moveName)))) {
 			return false;
 		}
 	}
 
-	if (!spellsQuery.execute()) {
+	if (!movesQuery.execute()) {
 		return false;
 	}
 

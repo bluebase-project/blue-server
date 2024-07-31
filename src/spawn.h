@@ -10,13 +10,13 @@
 #include <utility>
 #include <vector>
 
-class Monster;
-class MonsterType;
+class Pokemon;
+class PokemonType;
 class Npc;
 
 struct spawnBlock_t {
 	Position pos;
-	std::vector<std::pair<MonsterType*, uint16_t>> mTypes;
+	std::vector<std::pair<PokemonType*, uint16_t>> mTypes;
 	int64_t lastSpawn;
 	uint32_t interval;
 	Direction direction;
@@ -33,8 +33,8 @@ class Spawn
 		Spawn& operator=(const Spawn&) = delete;
 
 		bool addBlock(spawnBlock_t sb);
-		bool addMonster(const std::string& name, const Position& pos, Direction dir, uint32_t interval);
-		void removeMonster(Monster* monster);
+		bool addPokemon(const std::string& name, const Position& pos, Direction dir, uint32_t interval);
+		void removePokemon(Pokemon* pokemon);
 
 		uint32_t getInterval() const {
 			return interval;
@@ -49,7 +49,7 @@ class Spawn
 
 	private:
 		//map of the spawned creatures
-		using SpawnedMap = std::multimap<uint32_t, Monster*>;
+		using SpawnedMap = std::multimap<uint32_t, Pokemon*>;
 		SpawnedMap spawnedMap;
 
 		//map of creatures in the spawn
@@ -62,8 +62,8 @@ class Spawn
 		uint32_t checkSpawnEvent = 0;
 
 		static bool findPlayer(const Position& pos);
-		bool spawnMonster(uint32_t spawnId, spawnBlock_t sb, bool startup = false);
-		bool spawnMonster(uint32_t spawnId, MonsterType* mType, const Position& pos, Direction dir, bool startup = false);
+		bool spawnPokemon(uint32_t spawnId, spawnBlock_t sb, bool startup = false);
+		bool spawnPokemon(uint32_t spawnId, PokemonType* mType, const Position& pos, Direction dir, bool startup = false);
 		void checkSpawn();
 };
 

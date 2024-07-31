@@ -20,13 +20,13 @@ STACKPOS_TOP_FIELD = 254
 STACKPOS_TOP_MOVEABLE_ITEM_OR_CREATURE = 255
 
 THING_TYPE_PLAYER = CREATURETYPE_PLAYER + 1
-THING_TYPE_MONSTER = CREATURETYPE_MONSTER + 1
+THING_TYPE_POKEMON = CREATURETYPE_POKEMON + 1
 THING_TYPE_NPC = CREATURETYPE_NPC + 1
 
 COMBAT_POISONDAMAGE = COMBAT_EARTHDAMAGE
 CONDITION_EXHAUST = CONDITION_EXHAUST_WEAPON
-TALKTYPE_ORANGE_1 = TALKTYPE_MONSTER_SAY
-TALKTYPE_ORANGE_2 = TALKTYPE_MONSTER_YELL
+TALKTYPE_ORANGE_1 = TALKTYPE_POKEMON_SAY
+TALKTYPE_ORANGE_2 = TALKTYPE_POKEMON_YELL
 
 NORTH = DIRECTION_NORTH
 EAST = DIRECTION_EAST
@@ -46,8 +46,8 @@ do
 			local creatureType = 0
 			if methods.isPlayer(self) then
 				creatureType = THING_TYPE_PLAYER
-			elseif methods.isMonster(self) then
-				creatureType = THING_TYPE_MONSTER
+			elseif methods.isPokemon(self) then
+				creatureType = THING_TYPE_POKEMON
 			elseif methods.isNpc(self) then
 				creatureType = THING_TYPE_NPC
 			end
@@ -60,7 +60,7 @@ do
 		return methods[key]
 	end
 	rawgetmetatable("Player").__index = CreatureIndex
-	rawgetmetatable("Monster").__index = CreatureIndex
+	rawgetmetatable("Pokemon").__index = CreatureIndex
 	rawgetmetatable("Npc").__index = CreatureIndex
 end
 
@@ -231,42 +231,42 @@ do
 end
 
 do
-	local function SpellNewIndex(self, key, value)
-		if key == "onCastSpell" then
-			self:onCastSpell(value)
+	local function MoveNewIndex(self, key, value)
+		if key == "onCastMove" then
+			self:onCastMove(value)
 			return
 		end
 		rawset(self, key, value)
 	end
-	rawgetmetatable("Spell").__newindex = SpellNewIndex
+	rawgetmetatable("Move").__newindex = MoveNewIndex
 end
 
 do
-	local function MonsterTypeNewIndex(self, key, value)
+	local function PokemonTypeNewIndex(self, key, value)
 		if key == "onThink" then
-			self:eventType(MONSTERS_EVENT_THINK)
+			self:eventType(POKEMONS_EVENT_THINK)
 			self:onThink(value)
 			return
 		elseif key == "onAppear" then
-			self:eventType(MONSTERS_EVENT_APPEAR)
+			self:eventType(POKEMONS_EVENT_APPEAR)
 			self:onAppear(value)
 			return
 		elseif key == "onDisappear" then
-			self:eventType(MONSTERS_EVENT_DISAPPEAR)
+			self:eventType(POKEMONS_EVENT_DISAPPEAR)
 			self:onDisappear(value)
 			return
 		elseif key == "onMove" then
-			self:eventType(MONSTERS_EVENT_MOVE)
+			self:eventType(POKEMONS_EVENT_MOVE)
 			self:onMove(value)
 			return
 		elseif key == "onSay" then
-			self:eventType(MONSTERS_EVENT_SAY)
+			self:eventType(POKEMONS_EVENT_SAY)
 			self:onSay(value)
 			return
 		end
 		rawset(self, key, value)
 	end
-	rawgetmetatable("MonsterType").__newindex = MonsterTypeNewIndex
+	rawgetmetatable("PokemonType").__newindex = PokemonTypeNewIndex
 end
 
 function pushThing(thing)
@@ -284,8 +284,8 @@ function pushThing(thing)
 			t.itemid = 1
 			if thing:isPlayer() then
 				t.type = THING_TYPE_PLAYER
-			elseif thing:isMonster() then
-				t.type = THING_TYPE_MONSTER
+			elseif thing:isPokemon() then
+				t.type = THING_TYPE_POKEMON
 			else
 				t.type = THING_TYPE_NPC
 			end
@@ -328,7 +328,7 @@ function doCombat(cid, combat, var) return combat:execute(cid, var) end
 
 function isCreature(cid) return Creature(cid) end
 function isPlayer(cid) return Player(cid) end
-function isMonster(cid) return Monster(cid) end
+function isPokemon(cid) return Pokemon(cid) end
 function isSummon(cid) local c = Creature(cid) return c and c:getMaster() end
 function isNpc(cid) return Npc(cid) end
 function isItem(uid) return Item(uid) end
@@ -537,8 +537,8 @@ function getPlayerFood(cid)
 	end
 	local c = player:getCondition(CONDITION_REGENERATION, CONDITIONID_DEFAULT) return c and math.floor(c:getTicks() / 1000) or 0
 end
-function canPlayerLearnInstantSpell(cid, name) local p = Player(cid) return p and p:canLearnSpell(name) or false end
-function getPlayerLearnedInstantSpell(cid, name) local p = Player(cid) return p and p:hasLearnedSpell(name) or false end
+function canPlayerLearnInstantMove(cid, name) local p = Player(cid) return p and p:canLearnMove(name) or false end
+function getPlayerLearnedInstantMove(cid, name) local p = Player(cid) return p and p:hasLearnedMove(name) or false end
 function isPlayerGhost(cid) local p = Player(cid) return p and p:isInGhostMode() or false end
 function isPlayerPzLocked(cid) local p = Player(cid) return p and p:isPzLocked() or false end
 function isPremium(cid) local p = Player(cid) return p and p:isPremium() or false end
@@ -656,9 +656,9 @@ function doPlayerRemoveMount(cid, mountId) local p = Player(cid) return p and p:
 function doPlayerSendOutfitWindow(cid) local p = Player(cid) return p and p:sendOutfitWindow() or false end
 function doPlayerSendCancel(cid, text) local p = Player(cid) return p and p:sendCancelMessage(text) or false end
 function doPlayerFeed(cid, food) local p = Player(cid) return p and p:feed(food) or false end
-function playerLearnInstantSpell(cid, name) local p = Player(cid) return p and p:learnSpell(name) or false end
-doPlayerLearnInstantSpell = playerLearnInstantSpell
-function doPlayerUnlearnInstantSpell(cid, name) local p = Player(cid) return p and p:forgetSpell(name) or false end
+function playerLearnInstantMove(cid, name) local p = Player(cid) return p and p:learnMove(name) or false end
+doPlayerLearnInstantMove = playerLearnInstantMove
+function doPlayerUnlearnInstantMove(cid, name) local p = Player(cid) return p and p:forgetMove(name) or false end
 function doPlayerPopupFYI(cid, message) local p = Player(cid) return p and p:popupFYI(message) or false end
 function doSendTutorial(cid, tutorialId) local p = Player(cid) return p and p:sendTutorial(tutorialId) or false end
 doPlayerSendTutorial = doSendTutorial
@@ -737,43 +737,43 @@ end
 
 doPlayerSendDefaultCancel = doPlayerSendCancel
 
-function getMonsterTargetList(cid)
-	local monster = Monster(cid)
-	if monster == nil then
+function getPokemonTargetList(cid)
+	local pokemon = Pokemon(cid)
+	if pokemon == nil then
 		return false
 	end
 
 	local result = {}
-	for _, creature in ipairs(monster:getTargetList()) do
-		if monster:isTarget(creature) then
+	for _, creature in ipairs(pokemon:getTargetList()) do
+		if pokemon:isTarget(creature) then
 			result[#result + 1] = creature:getId()
 		end
 	end
 	return result
 end
-function getMonsterFriendList(cid)
-	local monster = Monster(cid)
-	if monster == nil then
+function getPokemonFriendList(cid)
+	local pokemon = Pokemon(cid)
+	if pokemon == nil then
 		return false
 	end
 
-	local z = monster:getPosition().z
+	local z = pokemon:getPosition().z
 
 	local result = {}
-	for _, creature in ipairs(monster:getFriendList()) do
+	for _, creature in ipairs(pokemon:getFriendList()) do
 		if not creature:isRemoved() and creature:getPosition().z == z then
 			result[#result + 1] = creature:getId()
 		end
 	end
 	return result
 end
-function doSetMonsterTarget(cid, target)
-	local monster = Monster(cid)
-	if monster == nil then
+function doSetPokemonTarget(cid, target)
+	local pokemon = Pokemon(cid)
+	if pokemon == nil then
 		return false
 	end
 
-	if monster:getMaster() then
+	if pokemon:getMaster() then
 		return true
 	end
 
@@ -782,30 +782,30 @@ function doSetMonsterTarget(cid, target)
 		return false
 	end
 
-	monster:selectTarget(target)
+	pokemon:selectTarget(target)
 	return true
 end
-doMonsterSetTarget = doSetMonsterTarget
-function doMonsterChangeTarget(cid)
-	local monster = Monster(cid)
-	if monster == nil then
+doPokemonSetTarget = doSetPokemonTarget
+function doPokemonChangeTarget(cid)
+	local pokemon = Pokemon(cid)
+	if pokemon == nil then
 		return false
 	end
 
-	if monster:getMaster() then
+	if pokemon:getMaster() then
 		return true
 	end
 
-	monster:searchTarget(1)
+	pokemon:searchTarget(1)
 	return true
 end
 function doCreateNpc(name, pos, ...)
 	local npc = Game.createNpc(name, pos, ...) return npc and npc:setMasterPos(pos) or false
 end
 function doSummonCreature(name, pos, ...)
-	local m = Game.createMonster(name, pos, ...) return m and m:getId() or false
+	local m = Game.createPokemon(name, pos, ...) return m and m:getId() or false
 end
-doCreateMonster = doSummonCreature
+doCreatePokemon = doSummonCreature
 function doConvinceCreature(cid, target)
 	local creature = Creature(cid)
 	if creature == nil then
@@ -820,13 +820,13 @@ function doConvinceCreature(cid, target)
 	creature:addSummon(targetCreature)
 	return true
 end
-function doSummonMonster(cid, name)
+function doSummonPokemon(cid, name)
 	local player = Player(cid)
 	local position = player:getPosition()
-	local monster = Game.createMonster(name, position)
-	if monster then
-		player:addSummon(monster)
-		monster:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
+	local pokemon = Game.createPokemon(name, position)
+	if pokemon then
+		player:addSummon(pokemon)
+		pokemon:getPosition():sendMagicEffect(CONST_ME_TELEPORT)
 	else
 		player:sendCancelMessage("There is not enough room.")
 		position:sendMagicEffect(CONST_ME_POFF)
@@ -1226,11 +1226,11 @@ function getWorldCreatures(type)
 	if type == 0 then
 		return Game.getPlayerCount()
 	elseif type == 1 then
-		return Game.getMonsterCount()
+		return Game.getPokemonCount()
 	elseif type == 2 then
 		return Game.getNpcCount()
 	end
-	return Game.getPlayerCount() + Game.getMonsterCount() + Game.getNpcCount()
+	return Game.getPlayerCount() + Game.getPokemonCount() + Game.getNpcCount()
 end
 
 saveData = saveServer
@@ -1311,23 +1311,23 @@ function Guild.removeMember(self, player)
 	return player:getGuild() == self and player:setGuild(nil)
 end
 
-function getPlayerInstantSpellCount(cid) local p = Player(cid) return p and #p:getInstantSpells() end
-function getPlayerInstantSpellInfo(cid, spellId)
+function getPlayerInstantMoveCount(cid) local p = Player(cid) return p and #p:getInstantMoves() end
+function getPlayerInstantMoveInfo(cid, moveId)
 	local player = Player(cid)
 	if not player then
 		return false
 	end
 
-	local spell = Spell(spellId)
-	if not spell or not player:canCast(spell) then
+	local move = Move(moveId)
+	if not move or not player:canCast(move) then
 		return false
 	end
 
-	return spell
+	return move
 end
 
 function doSetItemOutfit(cid, item, time) local c = Creature(cid) return c and c:setItemOutfit(item, time) end
-function doSetMonsterOutfit(cid, name, time) local c = Creature(cid) return c and c:setMonsterOutfit(name, time) end
+function doSetPokemonOutfit(cid, name, time) local c = Creature(cid) return c and c:setPokemonOutfit(name, time) end
 function doSetCreatureOutfit(cid, outfit, time)
 	local creature = Creature(cid)
 	if not creature then

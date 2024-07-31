@@ -149,7 +149,7 @@ function dolls.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	end
 
 	sound = sound:gsub('|PLAYERNAME|', player:getName())
-	player:say(sound, TALKTYPE_MONSTER_SAY, false, 0, fromPosition)
+	player:say(sound, TALKTYPE_POKEMON_SAY, false, 0, fromPosition)
 	return true
 end
 

@@ -114,7 +114,7 @@ function rustRemover.onUse(player, item, fromPosition, target, toPosition, isHot
 		if table.contains({9820, 9821, 9822}, target.itemid) then
 			msg = "The helmet was already damaged so badly that it broke when you tried to clean it."
 		end
-		player:say(msg, TALKTYPE_MONSTER_SAY)
+		player:say(msg, TALKTYPE_POKEMON_SAY)
 		target:getPosition():sendMagicEffect(CONST_ME_BLOCKHIT)
 		target:remove()
 	else

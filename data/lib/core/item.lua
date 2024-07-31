@@ -10,7 +10,7 @@ function Item.isCreature(self)
 	return false
 end
 
-function Item.isMonster(self)
+function Item.isPokemon(self)
 	return false
 end
 
@@ -266,7 +266,7 @@ do
 		end
 
 		if it:isRune() then
-			local rune = Spell(it:getId())
+			local rune = Move(it:getId())
 			if rune then
 				if rune:runeLevel() and rune:runeLevel() > 0 or rune:runeMagicLevel() and rune:runeMagicLevel() > 0 then
 					local tmpVocMap = rune:vocation()

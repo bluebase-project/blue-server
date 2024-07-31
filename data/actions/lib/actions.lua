@@ -229,7 +229,7 @@ function onUseShovel(player, item, fromPosition, target, toPosition, isHotkey)
 			Game.createItem(2159, 1, toPosition)
 			player:addAchievementProgress("Gold Digger", 100)
 		elseif randomValue > 95 then
-			Game.createMonster("Scarab", toPosition)
+			Game.createPokemon("Scarab", toPosition)
 		end
 		toPosition:sendMagicEffect(CONST_ME_POFF)
 	else

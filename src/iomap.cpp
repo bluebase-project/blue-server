@@ -22,7 +22,7 @@
 	|	|
 	|	|--- OTBM_SPAWNS (not implemented)
 	|	|	|--- OTBM_SPAWN_AREA (not implemented)
-	|	|	|--- OTBM_MONSTER (not implemented)
+	|	|	|--- OTBM_POKEMON (not implemented)
 	|	|
 	|	|--- OTBM_TOWNS
 	|	|	|--- OTBM_TOWN

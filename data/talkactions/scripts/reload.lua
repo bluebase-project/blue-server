@@ -23,8 +23,8 @@ local reloadTypes = {
 
 	["items"] = RELOAD_TYPE_ITEMS,
 
-	["monster"] = RELOAD_TYPE_MONSTERS,
-	["monsters"] = RELOAD_TYPE_MONSTERS,
+	["pokemon"] = RELOAD_TYPE_POKEMONS,
+	["pokemons"] = RELOAD_TYPE_POKEMONS,
 
 	["mount"] = RELOAD_TYPE_MOUNTS,
 	["mounts"] = RELOAD_TYPE_MOUNTS,
@@ -42,8 +42,8 @@ local reloadTypes = {
 	["raid"] = RELOAD_TYPE_RAIDS,
 	["raids"] = RELOAD_TYPE_RAIDS,
 
-	["spell"] = RELOAD_TYPE_SPELLS,
-	["spells"] =  RELOAD_TYPE_SPELLS,
+	["move"] = RELOAD_TYPE_MOVES,
+	["moves"] =  RELOAD_TYPE_MOVES,
 
 	["talk"] = RELOAD_TYPE_TALKACTIONS,
 	["talkaction"] = RELOAD_TYPE_TALKACTIONS,

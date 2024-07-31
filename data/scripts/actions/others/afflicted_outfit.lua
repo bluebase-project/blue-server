@@ -16,7 +16,7 @@ function afflictedOutfit.onUse(player, item, fromPosition, target, toPosition, i
 		player:addOutfitAddon(430, 2)
 		player:addOutfitAddon(431, 2)
 		player:setStorageValue(PlayerStorageKeys.afflictedPlagueMask, 1)
-		player:say("You gained a plague mask for your outfit.", TALKTYPE_MONSTER_SAY, false, player)
+		player:say("You gained a plague mask for your outfit.", TALKTYPE_POKEMON_SAY, false, player)
 		if player:hasOutfit(looktype, 3) then
 			player:addAchievement("Beak Doctor")
 		end
@@ -31,7 +31,7 @@ function afflictedOutfit.onUse(player, item, fromPosition, target, toPosition, i
 		player:addOutfitAddon(430, 1)
 		player:addOutfitAddon(431, 1)
 		player:setStorageValue(PlayerStorageKeys.addonPlagueBell, 1)
-		player:say("You gained a plague bell for your outfit.", TALKTYPE_MONSTER_SAY, false, player)
+		player:say("You gained a plague bell for your outfit.", TALKTYPE_POKEMON_SAY, false, player)
 		if player:hasOutfit(looktype, 3) then
 			player:addAchievement("Beak Doctor")
 		end
@@ -52,7 +52,7 @@ function afflictedOutfit.onUse(player, item, fromPosition, target, toPosition, i
 		player:addOutfit(431)
 		player:getPosition():sendMagicEffect(CONST_ME_GREEN_RINGS)
 		player:setStorageValue(PlayerStorageKeys.afflictedOutfit, 1)
-		player:say("You have restored an outfit.", TALKTYPE_MONSTER_SAY, false, player)
+		player:say("You have restored an outfit.", TALKTYPE_POKEMON_SAY, false, player)
 	end
 	return true
 end

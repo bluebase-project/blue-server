@@ -17,11 +17,11 @@
 #include "iologindata.h"
 #include "iomarket.h"
 #include "items.h"
-#include "monster.h"
+#include "pokemon.h"
 #include "movement.h"
 #include "scheduler.h"
 #include "server.h"
-#include "spells.h"
+#include "moves.h"
 #include "talkaction.h"
 #include "weapons.h"
 #include "script.h"
@@ -32,12 +32,12 @@ extern ConfigManager g_config;
 extern Actions* g_actions;
 extern Chat* g_chat;
 extern TalkActions* g_talkActions;
-extern Spells* g_spells;
+extern Moves* g_moves;
 extern Vocations g_vocations;
 extern GlobalEvents* g_globalEvents;
 extern CreatureEvents* g_creatureEvents;
 extern Events* g_events;
-extern Monsters g_monsters;
+extern Pokemons g_pokemons;
 extern MoveEvents* g_moveEvents;
 extern Weapons* g_weapons;
 extern Scripts* g_scripts;
@@ -360,22 +360,22 @@ Creature* Game::getCreatureByID(uint32_t id)
 {
 	if (id <= Player::playerAutoID) {
 		return getPlayerByID(id);
-	} else if (id <= Monster::monsterAutoID) {
-		return getMonsterByID(id);
+	} else if (id <= Pokemon::pokemonAutoID) {
+		return getPokemonByID(id);
 	} else if (id <= Npc::npcAutoID) {
 		return getNpcByID(id);
 	}
 	return nullptr;
 }
 
-Monster* Game::getMonsterByID(uint32_t id)
+Pokemon* Game::getPokemonByID(uint32_t id)
 {
 	if (id == 0) {
 		return nullptr;
 	}
 
-	auto it = monsters.find(id);
-	if (it == monsters.end()) {
+	auto it = pokemons.find(id);
+	if (it == pokemons.end()) {
 		return nullptr;
 	}
 	return it->second;
@@ -437,8 +437,8 @@ Creature* Game::getCreatureByName(const std::string& s)
 	}
 
 	{
-		auto it = std::find_if(monsters.begin(), monsters.end(), equalCreatureName);
-		if (it != monsters.end()) {
+		auto it = std::find_if(pokemons.begin(), pokemons.end(), equalCreatureName);
+		if (it != pokemons.end()) {
 			return it->second;
 		}
 	}
@@ -3421,7 +3421,7 @@ void Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 
 	player->resetIdleTime();
 
-	if (playerSaySpell(player, type, text)) {
+	if (playerSayMove(player, type, text)) {
 		return;
 	}
 
@@ -3475,21 +3475,21 @@ void Game::playerSay(uint32_t playerId, uint16_t channelId, SpeakClasses type,
 	}
 }
 
-bool Game::playerSaySpell(Player* player, SpeakClasses type, const std::string& text)
+bool Game::playerSayMove(Player* player, SpeakClasses type, const std::string& text)
 {
 	std::string words = text;
 
-	TalkActionResult_t result = g_talkActions->playerSaySpell(player, type, words);
+	TalkActionResult_t result = g_talkActions->playerSayMove(player, type, words);
 	if (result == TALKACTION_BREAK) {
 		return true;
 	}
 
-	result = g_spells->playerSaySpell(player, words);
+	result = g_moves->playerSayMove(player, words);
 	if (result == TALKACTION_BREAK) {
-		if (!g_config.getBoolean(ConfigManager::EMOTE_SPELLS)) {
+		if (!g_config.getBoolean(ConfigManager::EMOTE_MOVES)) {
 			return internalCreatureSay(player, TALKTYPE_SAY, words, false);
 		} else {
-			return internalCreatureSay(player, TALKTYPE_MONSTER_SAY, words, false);
+			return internalCreatureSay(player, TALKTYPE_POKEMON_SAY, words, false);
 		}
 
 	} else if (result == TALKACTION_FAILED) {
@@ -3638,7 +3638,7 @@ bool Game::internalCreatureSay(Creature* creature, SpeakClasses type, const std:
 		// is used if available and if it can be used, else a local vector is
 		// used (hopefully the compiler will optimize away the construction of
 		// the temporary when it's not used).
-		if (type != TALKTYPE_YELL && type != TALKTYPE_MONSTER_YELL) {
+		if (type != TALKTYPE_YELL && type != TALKTYPE_POKEMON_YELL) {
 			map.getSpectators(spectators, *pos, false, false,
 			              Map::maxClientViewportX, Map::maxClientViewportX,
 			              Map::maxClientViewportY, Map::maxClientViewportY);
@@ -4728,7 +4728,7 @@ void Game::updateCreatureType(Creature* creature)
 
 	uint32_t creatureId = creature->getID();
 	CreatureType_t creatureType = creature->getType();
-	if (creatureType == CREATURETYPE_MONSTER) {
+	if (creatureType == CREATURETYPE_POKEMON) {
 		const Creature* master = creature->getMaster();
 		if (master) {
 			masterPlayer = master->getPlayer();
@@ -5571,14 +5571,14 @@ void Game::removeNpc(Npc* npc)
 	npcs.erase(npc->getID());
 }
 
-void Game::addMonster(Monster* monster)
+void Game::addPokemon(Pokemon* pokemon)
 {
-	monsters[monster->getID()] = monster;
+	pokemons[pokemon->getID()] = pokemon;
 }
 
-void Game::removeMonster(Monster* monster)
+void Game::removePokemon(Pokemon* pokemon)
 {
-	monsters.erase(monster->getID());
+	pokemons.erase(pokemon->getID());
 }
 
 Guild* Game::getGuild(uint32_t id) const
@@ -5694,7 +5694,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 		case RELOAD_TYPE_EVENTS: return g_events->load();
 		case RELOAD_TYPE_GLOBALEVENTS: return g_globalEvents->reload();
 		case RELOAD_TYPE_ITEMS: return Item::items.reload();
-		case RELOAD_TYPE_MONSTERS: return g_monsters.reload();
+		case RELOAD_TYPE_POKEMONS: return g_pokemons.reload();
 		case RELOAD_TYPE_MOUNTS: return mounts.reload();
 		case RELOAD_TYPE_MOVEMENTS: return g_moveEvents->reload();
 		case RELOAD_TYPE_NPCS: {
@@ -5705,12 +5705,12 @@ bool Game::reload(ReloadTypes_t reloadType)
 		case RELOAD_TYPE_QUESTS: return quests.reload();
 		case RELOAD_TYPE_RAIDS: return raids.reload() && raids.startup();
 
-		case RELOAD_TYPE_SPELLS: {
-			if (!g_spells->reload()) {
-				std::cout << "[Error - Game::reload] Failed to reload spells." << std::endl;
+		case RELOAD_TYPE_MOVES: {
+			if (!g_moves->reload()) {
+				std::cout << "[Error - Game::reload] Failed to reload moves." << std::endl;
 				std::terminate();
-			} else if (!g_monsters.reload()) {
-				std::cout << "[Error - Game::reload] Failed to reload monsters." << std::endl;
+			} else if (!g_pokemons.reload()) {
+				std::cout << "[Error - Game::reload] Failed to reload pokemons." << std::endl;
 				std::terminate();
 			}
 			return true;
@@ -5733,7 +5733,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 			g_globalEvents->clear(true);
 			g_weapons->clear(true);
 			g_weapons->loadDefaults();
-			g_spells->clear(true);
+			g_moves->clear(true);
 			g_scripts->loadScripts("scripts", false, true);
 			g_creatureEvents->removeInvalidEvents();
 			/*
@@ -5750,18 +5750,18 @@ bool Game::reload(ReloadTypes_t reloadType)
 		}
 
 		default: {
-			if (!g_spells->reload()) {
-				std::cout << "[Error - Game::reload] Failed to reload spells." << std::endl;
+			if (!g_moves->reload()) {
+				std::cout << "[Error - Game::reload] Failed to reload moves." << std::endl;
 				std::terminate();
-			} else if (!g_monsters.reload()) {
-				std::cout << "[Error - Game::reload] Failed to reload monsters." << std::endl;
+			} else if (!g_pokemons.reload()) {
+				std::cout << "[Error - Game::reload] Failed to reload pokemons." << std::endl;
 				std::terminate();
 			}
 
 			g_actions->reload();
 			g_config.reload();
 			g_creatureEvents->reload();
-			g_monsters.reload();
+			g_pokemons.reload();
 			g_moveEvents->reload();
 			Npcs::reload();
 			raids.reload() && raids.startup();
@@ -5780,7 +5780,7 @@ bool Game::reload(ReloadTypes_t reloadType)
 			g_moveEvents->clear(true);
 			g_talkActions->clear(true);
 			g_globalEvents->clear(true);
-			g_spells->clear(true);
+			g_moves->clear(true);
 			g_scripts->loadScripts("scripts", false, true);
 			g_creatureEvents->removeInvalidEvents();
 			return true;

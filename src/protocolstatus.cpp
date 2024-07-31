@@ -105,8 +105,8 @@ void ProtocolStatus::sendStatusString()
 	players.append_attribute("max") = std::to_string(g_config.getNumber(ConfigManager::MAX_PLAYERS)).c_str();
 	players.append_attribute("peak") = std::to_string(g_game.getPlayersRecord()).c_str();
 
-	pugi::xml_node monsters = tsqp.append_child("monsters");
-	monsters.append_attribute("total") = std::to_string(g_game.getMonstersOnline()).c_str();
+	pugi::xml_node pokemons = tsqp.append_child("pokemons");
+	pokemons.append_attribute("total") = std::to_string(g_game.getPokemonsOnline()).c_str();
 
 	pugi::xml_node npcs = tsqp.append_child("npcs");
 	npcs.append_attribute("total") = std::to_string(g_game.getNpcsOnline()).c_str();

@@ -1,10 +1,10 @@
-local TYPE_ITEM, TYPE_MONSTER = 1, 2
+local TYPE_ITEM, TYPE_POKEMON = 1, 2
 
 local config = {
 	[5907] = { -- slingshot
 		name = "bear",
 		id = 3,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Bearbaiting",
 		chance = 20,
 		fail = {
@@ -17,7 +17,7 @@ local config = {
 	[13247] = { -- hunting horn
 		name = "boar",
 		id = 10,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Pig-Headed",
 		chance = 20,
 		fail = {
@@ -30,7 +30,7 @@ local config = {
 	[13291] = { -- maxilla maximus
 		name = "undead cavebear",
 		id = 12,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Out of the Stone Age",
 		chance = 20,
 		fail = {
@@ -54,7 +54,7 @@ local config = {
 	[13293] = { -- leather whip
 		name = "midnight panther",
 		id = 5,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Starless Night",
 		chance = 20,
 		fail = {
@@ -66,7 +66,7 @@ local config = {
 	[13294] = { -- harness
 		name = "draptor",
 		id = 6,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Scales and Tail",
 		chance = 20,
 		fail = {
@@ -78,7 +78,7 @@ local config = {
 	[13295] = { -- reins
 		name = "black sheep",
 		id = 4,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Little Ball of Wool",
 		chance = 20,
 		fail = {
@@ -91,7 +91,7 @@ local config = {
 	[13298] = { -- carrot on a stick
 		name = "terror bird",
 		id = 2,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Pecking Order",
 		chance = 15,
 		fail = {
@@ -104,7 +104,7 @@ local config = {
 	[13305] = { -- giant shrimp
 		name = "crustacea gigantica",
 		id = 7,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Fried Shrimp",
 		chance = 20,
 		fail = {
@@ -116,7 +116,7 @@ local config = {
 	[13307] = { -- sweet smelling bait
 		name = "wailing widow",
 		id = 1,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Spin-Off",
 		chance = 20,
 		fail = {
@@ -129,7 +129,7 @@ local config = {
 	[13498] = { -- scorpion sceptre
 		name = "sandstone scorpion",
 		id = 21,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Golden Sands",
 		chance = 20,
 		fail = {
@@ -142,7 +142,7 @@ local config = {
 	[13508] = { -- slug drug
 		name = "slug",
 		id = 14,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Slugging Around",
 		chance = 20,
 		fail = {
@@ -155,7 +155,7 @@ local config = {
 	[13535] = { -- fist on a stick
 		name = "dromedary",
 		id = 20,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Fata Morgana",
 		chance = 20,
 		fail = {
@@ -167,7 +167,7 @@ local config = {
 	[13536] = { -- diapason
 		name = "crystal wolf",
 		id = 16,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "The Right Tone",
 		chance = 20,
 		fail = {
@@ -180,7 +180,7 @@ local config = {
 		mountName = "donkey",
 		lookType = 399,
 		id = 13,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Loyal Lad",
 		chance = 20,
 		fail = {
@@ -192,7 +192,7 @@ local config = {
 	[13538] = { -- bamboo leaves
 		name = "panda",
 		id = 19,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Chequered Teddy",
 		chance = 20,
 		fail = {
@@ -206,7 +206,7 @@ local config = {
 		name = "enraged white deer",
 		mountName = "white deer",
 		id = 18,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Friend of Elves",
 		chance = 20,
 		fail = {
@@ -231,7 +231,7 @@ local config = {
 	[13939] = { -- sugar oat
 		name = "wild horse",
 		id = 17,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Lucky Horseshoe",
 		chance = 5,
 		fail = {
@@ -244,7 +244,7 @@ local config = {
 	[15545] = { -- foxtail
 		name = "manta ray",
 		id = 28,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Beneath the Sea",
 		chance = 20,
 		fail = {
@@ -256,7 +256,7 @@ local config = {
 	[15546] = { -- four-leaf clover
 		name = "ladybug",
 		id = 27,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Lovely Dots",
 		chance = 20,
 		fail = {
@@ -268,7 +268,7 @@ local config = {
 	[18447] = { -- iron loadstone
 		name = "ironblight",
 		id = 29,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Magnetised",
 		chance = 20,
 		fail = {
@@ -281,7 +281,7 @@ local config = {
 	[18448] = { -- glow wine
 		name = "magma crawler",
 		id = 30,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Way to Hell",
 		chance = 20,
 		fail = {
@@ -294,7 +294,7 @@ local config = {
 	[18449] = { -- decorative ribbon
 		name = "dragonling",
 		id = 31,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Dragon Mimicry",
 		chance = 20,
 		fail = {
@@ -305,7 +305,7 @@ local config = {
 	[18516] = { -- golem wrench
 		name = "modified gnarlhound",
 		id = 32,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Mind the Dog!",
 		chance = 100,
 		success = {sound = "Gnarl!", text = "You now own a modified gnarlhound."}
@@ -313,7 +313,7 @@ local config = {
 	[20138] = { -- leech
 		name = "water buffalo",
 		id = 35,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Swamp Beast",
 		chance = 20,
 		fail = {
@@ -326,7 +326,7 @@ local config = {
 	[22608] = { -- nightmare horn
 		name = "shock head",
 		id = 42,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Personal Nightmare",
 		chance = 20,
 		fail = {
@@ -338,7 +338,7 @@ local config = {
 	[23557] = { -- control unit
 		name = "walker",
 		id = 43,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Gear Up",
 		chance = 20,
 		fail = {
@@ -351,7 +351,7 @@ local config = {
 	[23810] = { -- the lion's heart
 		name = "noble lion",
 		id = 40,
-		type = TYPE_MONSTER,
+		type = TYPE_POKEMON,
 		achievement = "Lion King",
 		chance = 20,
 		fail = {
@@ -380,18 +380,18 @@ function taming.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	end
 
 	if target:getName():lower() == "horse" and item.itemid == 13939 then
-		player:say("The horse happily munches the sugar oat and runs on. You shouldn't steal one of the horse station's horses anyway.", TALKTYPE_MONSTER_SAY)
+		player:say("The horse happily munches the sugar oat and runs on. You shouldn't steal one of the horse station's horses anyway.", TALKTYPE_POKEMON_SAY)
 		item:remove(1)
 		return true
 	end
 
 	if target:getName():lower() == "white deer" and item.itemid == 13539 then
-		player:say("You should try to enrage this deer before your taming attempt. That way you make sure it's strong enough to carry you.", TALKTYPE_MONSTER_SAY)
+		player:say("You should try to enrage this deer before your taming attempt. That way you make sure it's strong enough to carry you.", TALKTYPE_POKEMON_SAY)
 		return true
 	end
 
 	if target:getName():lower() == "desperate white deer" and item.itemid == 13539 then
-		player:say("This deer doesn't show enough strength and is too desperate already. Only enraged deer have the necessary power to carry you.", TALKTYPE_MONSTER_SAY)
+		player:say("This deer doesn't show enough strength and is too desperate already. Only enraged deer have the necessary power to carry you.", TALKTYPE_POKEMON_SAY)
 		return true
 	end
 
@@ -409,7 +409,7 @@ function taming.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 		end
 	end
 
-	if target.type == TYPE_MONSTER then
+	if target.type == TYPE_POKEMON then
 		if target:getMaster() then
 			return false
 		end
@@ -417,7 +417,7 @@ function taming.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 
 	if math.random(100) > mount.chance then
 		local action = mount.fail[math.random(#mount.fail)]
-		player:say(action.text, TALKTYPE_MONSTER_SAY)
+		player:say(action.text, TALKTYPE_POKEMON_SAY)
 		if action.run then
 			target:getPosition():sendMagicEffect(CONST_ME_POFF)
 			target:remove()
@@ -430,7 +430,7 @@ function taming.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 			target:removeCondition(CONDITION_OUTFIT)
 		end
 		if action.sound then
-			player:say(action.sound, TALKTYPE_MONSTER_SAY, false, 0, toPosition)
+			player:say(action.sound, TALKTYPE_POKEMON_SAY, false, 0, toPosition)
 		end
 		return true
 	end
@@ -438,8 +438,8 @@ function taming.onUse(player, item, fromPosition, target, toPosition, isHotkey)
 	player:addMount(mount.id)
 	player:addAchievement("Natural Born Cowboy")
 	player:addAchievement(mount.achievement)
-	player:say(mount.success.text, TALKTYPE_MONSTER_SAY)
-	player:say(mount.success.sound, TALKTYPE_MONSTER_SAY, false, 0, toPosition)
+	player:say(mount.success.text, TALKTYPE_POKEMON_SAY)
+	player:say(mount.success.sound, TALKTYPE_POKEMON_SAY, false, 0, toPosition)
 	target:remove()
 	item:remove(1)
 	return true

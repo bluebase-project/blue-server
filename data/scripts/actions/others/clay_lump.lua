@@ -21,7 +21,7 @@ function clayLump.onUse(player, item, fromPosition, target, toPosition, isHotkey
 			end
 
 			if tmpItem.sound then
-				player:say(tmpItem.sound, TALKTYPE_MONSTER_SAY, false, player)
+				player:say(tmpItem.sound, TALKTYPE_POKEMON_SAY, false, player)
 			end
 
 			if tmpItem.description then
